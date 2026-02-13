@@ -1,5 +1,3 @@
-using System.Reflection.Metadata.Ecma335;
-
 interface IMyCollection<T>
 {
     void Add(T item);
