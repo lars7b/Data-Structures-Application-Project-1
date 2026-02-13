@@ -13,3 +13,9 @@ interface IMyCollection<T>
     IMyIterator<T> GetIterator(); //todo: make custom Iterator, cant use System.Collections.Generic
     IEnumerator<T> GetEnumerator();
 }
+interface IMyIterator<T>
+{
+    bool HasNext();
+    T Next();
+    void Reset();
+}
