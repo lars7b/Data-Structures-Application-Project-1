@@ -1,4 +1,4 @@
-interface IMyCollection<T>
+public interface IMyCollection<T>
 {
     void Add(T item);
     void Remove(T item);
@@ -13,7 +13,7 @@ interface IMyCollection<T>
     IMyIterator<T> GetIterator(); //todo: make custom Iterator, cant use System.Collections.Generic
     IEnumerator<T> GetEnumerator();
 }
-interface IMyIterator<T>
+public interface IMyIterator<T>
 {
     bool HasNext();
     T Next();
