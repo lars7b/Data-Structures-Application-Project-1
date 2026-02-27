@@ -52,7 +52,17 @@ public class MyList<T> : IMyCollection<T>
 
     public void Remove(T item)
     {
-        throw new NotImplementedException();
+        for(int i = 0; i < Count; i++)
+        {
+            if(Equals(_array[i], item))
+            {
+                for (int j = i; j < Count - 1; j++)
+                {
+                    _array[j] = _array[j + 1];
+                }
+                _count--;
+            }
+        }
     }
 
     public void Sort(Comparison<T> comparison)
