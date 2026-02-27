@@ -2,9 +2,18 @@ namespace Project_1.Collections;
 
 public class MyList<T> : IMyCollection<T>
 {
-    public int Count => throw new NotImplementedException();
+    private T[] _array;
+    private int _count;
 
-    public bool Dirty { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public int Count => _count;
+
+    public bool Dirty { get; set; }
+
+    public MyList()
+    {
+        _array = new T[4];
+        _count = 0;
+    }
 
     public void Add(T item)
     {
