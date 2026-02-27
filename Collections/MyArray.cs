@@ -13,7 +13,19 @@ public class MyArray<T> : IMyCollection<T>
 
     public void Add(T item)
     {
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
+        if(_count == _array.Length)
+        {
+            int newCapacity = _array.Length * 2;
+            T[] newArray = new T[newCapacity];
+            for(int i = 0; i < _count; i++)
+            {
+                newArray[i] = _array[i];
+            }
+            _array = newArray;
+        }
+        _array[_count] = item;
+        _count++;
     }
 
     public IMyCollection<T> Filter(Func<T, bool> predicate)
