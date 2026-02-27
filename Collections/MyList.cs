@@ -1,51 +1,52 @@
 namespace Project_1.Collections;
 
-public class MyList : IMyCollection<MyList>
+public class MyList<T> : IMyCollection<T>
 {
-    public int Count { get; }
-    public bool Dirty { get; set; }
+    public int Count => throw new NotImplementedException();
 
-    public void Add(MyList item)
+    public bool Dirty { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    public void Add(T item)
     {
         throw new NotImplementedException();
     }
 
-    public void Remove(MyList item)
+    public IMyCollection<T> Filter(Func<T, bool> predicate)
     {
         throw new NotImplementedException();
     }
 
-    public MyList FindBy<K>(K key, Func<MyList, K, bool> comparer)
+    public T FindBy<K>(K key, Func<T, K, bool> comparer)
     {
         throw new NotImplementedException();
     }
 
-    public IMyCollection<MyList> Filter(Func<MyList, bool> predicate)
+    public IEnumerator<T> GetEnumerator()
     {
         throw new NotImplementedException();
     }
 
-    public void Sort(Comparison<MyList> comparison)
+    public IMyIterator<T> GetIterator()
     {
         throw new NotImplementedException();
     }
 
-    public R Reduce<R>(Func<R, MyList, R> accumulator)
+    public R Reduce<R>(Func<R, T, R> accumulator)
     {
         throw new NotImplementedException();
     }
 
-    public R Reduce<R>(R initial, Func<R, MyList, R> accumulator)
+    public R Reduce<R>(R initial, Func<R, T, R> accumulator)
     {
         throw new NotImplementedException();
     }
 
-    public IMyIterator<MyList> GetIterator()
+    public void Remove(T item)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerator<MyList> GetEnumerator()
+    public void Sort(Comparison<T> comparison)
     {
         throw new NotImplementedException();
     }
