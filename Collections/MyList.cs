@@ -17,7 +17,10 @@ public class MyList<T> : IMyCollection<T>
 
     public void Add(T item)
     {
-        throw new NotImplementedException();
+        if (_count == _array.Length) Resize(_array, _count * (3 / 2));
+        _array[_count] = item;
+        _count++;
+        Dirty = true;
     }
 
     public IMyCollection<T> Filter(Func<T, bool> predicate)
@@ -68,5 +71,12 @@ public class MyList<T> : IMyCollection<T>
     public void Sort(Comparison<T> comparison)
     {
         throw new NotImplementedException();
+    }
+
+    private void Resize(T[] array, int size)
+    {
+        var nArray = new T[size];
+        for (var i = 0; i < array.Length; i++) nArray[i] = array[i];
+        _array = nArray;
     }
 }
