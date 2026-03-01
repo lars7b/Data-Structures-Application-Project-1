@@ -25,7 +25,12 @@ public class MyList<T> : IMyCollection<T>
 
     public IMyCollection<T> Filter(Func<T, bool> predicate)
     {
-        throw new NotImplementedException();
+        var result = new MyList<T>();
+
+        for (var i = 0; i < _count; i++)
+            if (predicate(_array[i]))
+                result.Add(_array[i]);
+        return result;
     }
 
     public T FindBy<K>(K key, Func<T, K, bool> comparer)
