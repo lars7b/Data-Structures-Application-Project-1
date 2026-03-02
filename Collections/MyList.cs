@@ -1,28 +1,45 @@
+using System.Collections;
+
 namespace Project_1.Collections;
 
-public class MyList<T> : IMyCollection<T>
+public class MyList<T> : IMyCollection<T>, IEnumerable<T> //TODO: Ask if allowed to inherit IEnumerable<T>
 {
     private T[] _array;
-    private int _count;
 
-    public int Count => _count;
+    public int Count { get; private set; }
 
     public bool Dirty { get; set; }
 
     public MyList()
     {
-        _array = new T[4];
-        _count = 0;
+        _array = [];
+        Count = 0;
+    }
+
+    public MyList(IEnumerable<T> collection)
+    {
+        _array = [];
+        Count = 0;
+        foreach (var item in collection)
+            Add(item);
     }
 
     public void Add(T item)
     {
-        throw new NotImplementedException();
+        if (Count == _array.Length) Resize(_array, Count + 1);
+        _array[Count] = item;
+        Count++;
+        Dirty = true;
     }
 
     public IMyCollection<T> Filter(Func<T, bool> predicate)
     {
-        throw new NotImplementedException();
+        var result = new MyList<T>();
+
+        for (var i = 0; i < Count; i++)
+            if (predicate(_array[i]))
+                result.Add(_array[i]);
+        return result;
     }
 
     public T FindBy<K>(K key, Func<T, K, bool> comparer)
@@ -32,12 +49,18 @@ public class MyList<T> : IMyCollection<T>
 
     public IEnumerator<T> GetEnumerator()
     {
-        throw new NotImplementedException();
+        for (var i = 0; i < Count; i++)
+            yield return _array[i];
+    }
+    
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 
     public IMyIterator<T> GetIterator()
     {
-        throw new NotImplementedException();
+        return new MyListIterator<T>(_array);
     }
 
     public R Reduce<R>(Func<R, T, R> accumulator)
@@ -60,7 +83,7 @@ public class MyList<T> : IMyCollection<T>
                 {
                     _array[j] = _array[j + 1];
                 }
-                _count--;
+                Count--;
             }
         }
     }
@@ -68,5 +91,12 @@ public class MyList<T> : IMyCollection<T>
     public void Sort(Comparison<T> comparison)
     {
         throw new NotImplementedException();
+    }
+
+    private void Resize(T[] array, int size)
+    {
+        var nArray = new T[size];
+        for (var i = 0; i < array.Length; i++) nArray[i] = array[i];
+        _array = nArray;
     }
 }
