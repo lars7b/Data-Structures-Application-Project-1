@@ -44,7 +44,12 @@ public class MyList<T> : IMyCollection<T>, IEnumerable<T> //TODO: Ask if allowed
 
     public T FindBy<K>(K key, Func<T, K, bool> comparer)
     {
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
+        for(int i = 0; i < _count; i++)
+        {
+            if(comparer(_array[i], key)) return _array[i];
+        }
+        return default;
     }
 
     public IEnumerator<T> GetEnumerator()
