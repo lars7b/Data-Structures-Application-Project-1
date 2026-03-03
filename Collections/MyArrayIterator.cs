@@ -1,6 +1,6 @@
 ﻿namespace Project_1.Collections;
 
-public class MyListIterator<T>(T[] array) : IMyIterator<T>
+public class MyArrayIterator<T>(T[] array) : IMyIterator<T>
 {
     private int _index;
 

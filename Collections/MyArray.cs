@@ -1,8 +1,6 @@
-using System.Collections;
-
 namespace Project_1.Collections;
 
-public class MyList<T> : IMyCollection<T>, IEnumerable<T> //TODO: Ask if allowed to inherit IEnumerable<T>
+public class MyArray<T> : IMyCollection<T>
 {
     private T[] _array;
 
@@ -10,18 +8,10 @@ public class MyList<T> : IMyCollection<T>, IEnumerable<T> //TODO: Ask if allowed
 
     public bool Dirty { get; set; }
 
-    public MyList()
+    public MyArray()
     {
         _array = [];
         Count = 0;
-    }
-
-    public MyList(IEnumerable<T> collection)
-    {
-        _array = [];
-        Count = 0;
-        foreach (var item in collection)
-            Add(item);
     }
 
     public void Add(T item)
@@ -34,15 +24,15 @@ public class MyList<T> : IMyCollection<T>, IEnumerable<T> //TODO: Ask if allowed
 
     public IMyCollection<T> Filter(Func<T, bool> predicate)
     {
-        var result = new MyList<T>();
+        var result = new MyArray<T>();
 
-        for (var i = 0; i < Count; i++)
-            if (predicate(_array[i]))
-                result.Add(_array[i]);
+        foreach (var item in _array)
+            if (predicate(item))
+                result.Add(item);
         return result;
     }
 
-    public T FindBy<K>(K key, Func<T, K, bool> comparer)
+    public T? FindBy<K>(K key, Func<T, K, bool> comparer)
     {
         throw new NotImplementedException();
     }
@@ -52,15 +42,10 @@ public class MyList<T> : IMyCollection<T>, IEnumerable<T> //TODO: Ask if allowed
         for (var i = 0; i < Count; i++)
             yield return _array[i];
     }
-    
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
 
     public IMyIterator<T> GetIterator()
     {
-        return new MyListIterator<T>(_array);
+        return new MyArrayIterator<T>(_array);
     }
 
     public R Reduce<R>(Func<R, T, R> accumulator)
@@ -70,7 +55,11 @@ public class MyList<T> : IMyCollection<T>, IEnumerable<T> //TODO: Ask if allowed
 
     public R Reduce<R>(R initial, Func<R, T, R> accumulator)
     {
-        throw new NotImplementedException();
+        var result = initial;
+
+        for (var i = 0; i < Count; i++)
+            result = accumulator(result, _array[i]);
+        return result;
     }
 
     public void Remove(T item)
