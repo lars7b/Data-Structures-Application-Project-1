@@ -30,7 +30,7 @@ public class MyList<T> : IMyCollection<T>
         // throw new NotImplementedException();
         for(int i = 0; i < _count; i++)
         {
-            if(_array[i].Equals(key)) return _array[i];
+            if(comparer(_array[i], key)) return _array[i];
         }
         return default;
     }
