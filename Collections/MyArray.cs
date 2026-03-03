@@ -1,51 +1,55 @@
+namespace Project_1.Collections;
+
 public class MyArray<T> : IMyCollection<T>
 {
     private T[] _array;
-    private int _count;
+
+    public int Count { get; private set; }
+
+    public bool Dirty { get; set; }
+
     public MyArray()
     {
-        _array = new T[4];
-        _count = 0;
+        _array = [];
+        Count = 0;
     }
-    public int Count => _count;
-
-    public bool Dirty { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public void Add(T item)
     {
-        // throw new NotImplementedException();
-        if(_count == _array.Length)
-        {
-            int newCapacity = _array.Length * 2;
-            T[] newArray = new T[newCapacity];
-            for(int i = 0; i < _count; i++)
-            {
-                newArray[i] = _array[i];
-            }
-            _array = newArray;
-        }
-        _array[_count] = item;
-        _count++;
+        if (Count == _array.Length) Resize(_array, Count + 1);
+        _array[Count] = item;
+        Count++;
+        Dirty = true;
     }
 
     public IMyCollection<T> Filter(Func<T, bool> predicate)
     {
-        throw new NotImplementedException();
+        var result = new MyArray<T>();
+
+        for (var i = 0; i < Count; i++)
+            if (predicate(_array[i]))
+                result.Add(_array[i]);
+        return result;
     }
 
-    public T FindBy<K>(K key, Func<T, K, bool> comparer)
+    public T? FindBy<K>(K key, Func<T, K, bool> comparer)
     {
-        throw new NotImplementedException();
+        for(int i = 0; i < Count; i++)
+        {
+            if(comparer(_array[i], key)) return _array[i];
+        }
+        return default;
     }
 
     public IEnumerator<T> GetEnumerator()
     {
-        throw new NotImplementedException();
+        for (var i = 0; i < Count; i++)
+            yield return _array[i];
     }
 
     public IMyIterator<T> GetIterator()
     {
-        throw new NotImplementedException();
+        return new MyArrayIterator<T>(_array);
     }
 
     public R Reduce<R>(Func<R, T, R> accumulator)
@@ -55,16 +59,37 @@ public class MyArray<T> : IMyCollection<T>
 
     public R Reduce<R>(R initial, Func<R, T, R> accumulator)
     {
-        throw new NotImplementedException();
+        var result = initial;
+
+        for (var i = 0; i < Count; i++)
+            result = accumulator(result, _array[i]);
+        return result;
     }
 
     public void Remove(T item)
     {
-        throw new NotImplementedException();
+        for(int i = 0; i < Count; i++)
+        {
+            if(Equals(_array[i], item))
+            {
+                for (int j = i; j < Count - 1; j++)
+                {
+                    _array[j] = _array[j + 1];
+                }
+                Count--;
+            }
+        }
     }
 
     public void Sort(Comparison<T> comparison)
     {
         throw new NotImplementedException();
+    }
+
+    private void Resize(T[] array, int size)
+    {
+        var nArray = new T[size];
+        for (var i = 0; i < array.Length; i++) nArray[i] = array[i];
+        _array = nArray;
     }
 }
