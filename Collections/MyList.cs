@@ -27,7 +27,12 @@ public class MyList<T> : IMyCollection<T>
 
     public T FindBy<K>(K key, Func<T, K, bool> comparer)
     {
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
+        for(int i = 0; i < _count; i++)
+        {
+            if(_array[i].Equals(key)) return _array[i];
+        }
+        return default;
     }
 
     public IEnumerator<T> GetEnumerator()
