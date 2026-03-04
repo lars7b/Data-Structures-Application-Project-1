@@ -1,15 +1,44 @@
 using System.Collections;
+using System.Security.AccessControl;
 
 namespace Project_1.Collections;
 
-public class MyLinkedList<T>
+public class MyLinkedList<T> : IMyCollection<T>
 {
-    private Node<T> head;
-    private Node<T> tail;
+    private Node head;
+    private Node tail;
+    private int _count;
+    public int Count
+    {
+        get
+        {
+            if (_count < 0)
+            {
+                _count = 0;
+            }
+            return _count;
+        }
+        private set
+        {
+            _count = value;
+        }
+    }
+
+    private class Node
+    {
+        public T Data { get; set; }
+        public Node? Next { get; set; }
+
+        public Node(T data)
+        {
+            Data = data;
+            Next = null;
+        }
+    }
 
     public void Add(T data)
     {
-        var newNode = new Node<T>(data);
+        var newNode = new Node(data);
         if (head == null)
         {
             head = newNode;
@@ -20,14 +49,43 @@ public class MyLinkedList<T>
             tail.Next = newNode;
             tail = newNode;
         }
+        Count++;
     }
 
     public void Remove(T item)
     {
-        throw new NotImplementedException();
+        if (head == null) return;
+        if (head.Data.Equals(item))
+        {
+            head = head.Next;
+            Count--;
+
+            if (head == null)
+            {
+                tail = null;
+            }
+
+            return;
+        }
+
+        Node current = head;
+        while (current.Next != null)
+        {
+            if (current.Next.Data.Equals(item))
+            {
+                current.Next = current.Next.Next;
+                Count--;
+
+                if (current.Next == null)
+                {
+                    tail = current;
+                }
+            }
+        current = current.Next;
+        } 
     }
 
-    public T FindBy<K>(K key, Func<T, K, bool> comparer)
+    public T? FindBy<K>(K key, Func<T, K, bool> comparer)
     {
         throw new NotImplementedException();
     }
@@ -38,11 +96,6 @@ public class MyLinkedList<T>
     }
 
     public void Sort(Comparison<T> comparison)
-    {
-        throw new NotImplementedException();
-    }
-
-    public R Reduce<R>(Func<R, T, R> accumulator)
     {
         throw new NotImplementedException();
     }
