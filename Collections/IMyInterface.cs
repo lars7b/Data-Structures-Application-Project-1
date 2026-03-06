@@ -6,7 +6,7 @@ public interface IMyCollection<T>
     bool Dirty { get; set; }
     void Add(T item);
     void Remove(T item);
-    T? FindBy<K>(K key, Func<T, K, bool> comparer);
+    Result<T>? FindBy<K>(K key, Func<T, K, bool> comparer);
     IMyCollection<T> Filter(Func<T, bool> predicate);
     void Sort(Comparison<T> comparison);
     R Reduce<R>(Func<R, T, R> accumulator);
@@ -14,7 +14,7 @@ public interface IMyCollection<T>
     IMyIterator<T> GetIterator(); //todo: make custom Iterator, cant use System.Collections.Generic
     IEnumerator<T> GetEnumerator();
 }
-
+public record Result<T>(bool Succes, T Value);
 public interface IMyIterator<T>
 {
     bool HasNext();

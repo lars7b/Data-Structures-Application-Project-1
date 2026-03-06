@@ -32,11 +32,11 @@ public class MyArray<T> : IMyCollection<T>
         return result;
     }
 
-    public T? FindBy<K>(K key, Func<T, K, bool> comparer)
+    public Result<T>? FindBy<K>(K key, Func<T, K, bool> comparer)
     {
         for(int i = 0; i < Count; i++)
         {
-            if(comparer(_array[i], key)) return _array[i];
+            if(comparer(_array[i], key)) return new Result<T>(true, _array[i]);
         }
         return default;
     }
