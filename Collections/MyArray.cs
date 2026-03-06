@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace Project_1.Collections;
 
 public class MyArray<T> : IMyCollection<T>
@@ -85,19 +87,24 @@ public class MyArray<T> : IMyCollection<T>
 
     public void Sort(Comparison<T> comparison)
     {
-        for(int i = 0; i < _array.Length-1; i++)
+        for(int i = 0; i < Count-1; i++)
         {
-            int min_index = 1;
-            for(int j = i+1; j < _array.Length - 1; j++)
+            int min_index = i;
+            for(int j = i+1; j < Count; j++)
             {
                 if(comparison(_array[j], _array[min_index]) < 0) {
                     min_index = j;
                 }
             }
-            T temp = _array[i];
-            _array[i] = _array[min_index];
-            _array[min_index] = temp;
+            if(min_index != i)
+            {
+                T temp = _array[i];
+                _array[i] = _array[min_index];
+                    
+                _array[min_index] = temp;
+            }
         }
+        Dirty = true;
     }
 
     private void Resize(T[] array, int size)
@@ -106,4 +113,5 @@ public class MyArray<T> : IMyCollection<T>
         for (var i = 0; i < array.Length; i++) nArray[i] = array[i];
         _array = nArray;
     }
+
 }
