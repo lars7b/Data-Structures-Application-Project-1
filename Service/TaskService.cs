@@ -1,4 +1,5 @@
-﻿using Project_1.Model;
+﻿using Project_1.Collections;
+using Project_1.Model;
 using Project_1.Repository;
 
 namespace Project_1.Service;
@@ -6,7 +7,7 @@ namespace Project_1.Service;
 public class TaskService : ITaskService
 {
     private readonly ITaskRepository _repository;
-    private readonly List<TaskItem> _tasks;
+    private readonly MyArray<TaskItem> _tasks;
 
     public TaskService(ITaskRepository repository)
     {
@@ -14,7 +15,7 @@ public class TaskService : ITaskService
         _tasks = _repository.LoadTasks();
     }
 
-    public IEnumerable<TaskItem> GetAllTasks()
+    public IMyCollection<TaskItem> GetAllTasks()
     {
         return _tasks;
     }
@@ -29,7 +30,7 @@ public class TaskService : ITaskService
 
     public void RemoveTask(int id)
     {
-        var task = _tasks.Find(x => x.Id == id);
+        var task = _tasks.FindBy(x => x.Id == id);
         if (task == null) return;
         _tasks.Remove(task);
         _repository.SaveTasks(_tasks);
@@ -37,7 +38,7 @@ public class TaskService : ITaskService
 
     public void ToggleTaskComplete(int id)
     {
-        var task = _tasks.Find(x => x.Id == id);
+        var task = _tasks.FindBy(x => x.Id == id);
         if (task == null) return;
         task.Completed = !task.Completed;
         _repository.SaveTasks(_tasks);
