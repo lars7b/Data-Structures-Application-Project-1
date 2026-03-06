@@ -81,13 +81,22 @@ public class MyLinkedList<T> : IMyCollection<T>
                     tail = current;
                 }
             }
-        current = current.Next;
-        } 
+            current = current.Next;
+        }
     }
 
     public T? FindBy<K>(K key, Func<T, K, bool> comparer)
     {
-        throw new NotImplementedException();
+        Node? current = head;
+        while (current != null)
+        {
+            if (comparer(current.Data, key))
+            {
+                return current.Data;
+            }
+            current = current.Next;
+        }
+        return default;
     }
 
     public IMyCollection<T> Filter(Func<T, bool> predicate)
