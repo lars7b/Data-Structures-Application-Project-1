@@ -15,7 +15,11 @@ public class MyArray<T> : IMyCollection<T>
         _array = [];
         Count = 0;
     }
-
+    public T this[int i]
+    {
+        get => _array[i];
+        set => _array[i] = value;
+    }
     public void Add(T item)
     {
         if (Count == _array.Length) Resize(_array, Count + 1);
