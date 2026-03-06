@@ -54,7 +54,9 @@ public class MyArray<T> : IMyCollection<T>
 
     public R Reduce<R>(Func<R, T, R> accumulator)
     {
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
+        R result = default;
+        return Reduce(result, accumulator);
     }
 
     public R Reduce<R>(R initial, Func<R, T, R> accumulator)
@@ -83,7 +85,19 @@ public class MyArray<T> : IMyCollection<T>
 
     public void Sort(Comparison<T> comparison)
     {
-        throw new NotImplementedException();
+        for(int i = 0; i < _array.Length-1; i++)
+        {
+            int min_index = 1;
+            for(int j = i+1; j < _array.Length - 1; j++)
+            {
+                if(comparison(_array[j], _array[min_index]) < 0) {
+                    min_index = j;
+                }
+            }
+            T temp = _array[i];
+            _array[i] = _array[min_index];
+            _array[min_index] = temp;
+        }
     }
 
     private void Resize(T[] array, int size)
