@@ -5,8 +5,8 @@ namespace Project_1.Collections;
 
 public class MyLinkedList<T> : IMyCollection<T>
 {
-    private Node head;
-    private Node tail;
+    private Node? head;
+    private Node? tail;
     private int _count;
     public int Count
     {
@@ -34,6 +34,12 @@ public class MyLinkedList<T> : IMyCollection<T>
             Data = data;
             Next = null;
         }
+    }
+
+    public MyLinkedList()
+    {
+        head = null;
+        tail = null;
     }
 
     public void Add(T data)
@@ -80,6 +86,7 @@ public class MyLinkedList<T> : IMyCollection<T>
                 {
                     tail = current;
                 }
+                break;
             }
             current = current.Next;
         }
@@ -106,7 +113,17 @@ public class MyLinkedList<T> : IMyCollection<T>
 
     public void Sort(Comparison<T> comparison)
     {
-        throw new NotImplementedException();
+        var curr = head;
+        while (curr != null && curr.Next != null)
+        {
+            if (comparison(curr.Data, curr.Next.Data) > 0)
+            {
+                var temp = curr.Data;
+                curr.Data = curr.Next.Data;
+                curr.Next.Data = temp;
+            }
+            curr = curr.Next;
+        }
     }
 
     public R Reduce<R>(R initial, Func<R, T, R> accumulator)
