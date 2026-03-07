@@ -1,4 +1,5 @@
-﻿using Project_1.Model;
+﻿using Project_1.Collections;
+using Project_1.Model;
 using Project_1.Service;
 
 namespace Project_1.View;
@@ -41,7 +42,7 @@ public class ConsoleTaskView(ITaskService service) : ITaskView
         }
     }
 
-    private static void DisplayTasks(IEnumerable<TaskItem> tasks)
+    private static void DisplayTasks(IMyCollection<TaskItem> tasks)
     {
         Console.Clear();
         Console.WriteLine("==== ToDo List ====");
