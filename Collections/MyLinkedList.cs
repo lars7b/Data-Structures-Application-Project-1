@@ -26,7 +26,7 @@ public class MyLinkedList<T> : IMyCollection<T>
 
     private class Node
     {
-        public T Data { get; set; }
+        public T? Data { get; set; }
         public Node? Next { get; set; }
 
         public Node(T data)
