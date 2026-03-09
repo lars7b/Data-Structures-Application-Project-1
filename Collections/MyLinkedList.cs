@@ -108,27 +108,62 @@ public class MyLinkedList<T> : IMyCollection<T>
 
     public IMyCollection<T> Filter(Func<T, bool> predicate)
     {
-        throw new NotImplementedException();
+        var filteredList = new MyLinkedList<T>();
+        Node? current = head;
+        
+        while (current != null)
+        {
+            if (current.Data != null && predicate(current.Data))
+            {
+                filteredList.Add(current.Data);
+            }
+            current = current.Next;
+        }
+        
+        return filteredList;
     }
 
+    //this is slow, replace with merge sort
     public void Sort(Comparison<T> comparison)
     {
-        var curr = head;
-        while (curr != null && curr.Next != null)
+        if (head == null || head.Next == null) return;
+
+        bool swapped;
+        do
         {
-            if (comparison(curr.Data, curr.Next.Data) > 0)
+            swapped = false;
+            Node? current = head;
+
+            while (current != null && current.Next != null)
             {
-                var temp = curr.Data;
-                curr.Data = curr.Next.Data;
-                curr.Next.Data = temp;
+                if (current.Data != null && current.Next.Data != null && 
+                    comparison(current.Data, current.Next.Data) > 0)
+                {
+                    var temp = current.Data;
+                    current.Data = current.Next.Data;
+                    current.Next.Data = temp;
+                    
+                    swapped = true;
+                }
+                current = current.Next;
             }
-            curr = curr.Next;
-        }
+        } while (swapped);
     }
 
     public R Reduce<R>(R initial, Func<R, T, R> accumulator)
     {
-        throw new NotImplementedException();
+        R result = initial;
+        Node? current = head;
+
+        while (current != null)
+        {
+            if (current.Data != null)
+            {
+                result = accumulator(result, current.Data)
+            }
+            current = current.Next;
+        }
+        return result;
     }
 
     public IMyIterator<T> GetIterator() //cant use System.Collections.Generic
@@ -138,6 +173,14 @@ public class MyLinkedList<T> : IMyCollection<T>
 
     public IEnumerator<T> GetEnumerator()
     {
-        throw new NotImplementedException();
+        Node current = head;
+        while (head != null)
+        {
+            if (current.Data != null)
+            {
+                yield return current.Data;
+            }
+            current = current.Next;
+        }
     }
 }
