@@ -30,17 +30,17 @@ public class TaskService : ITaskService
 
     public void RemoveTask(int id)
     {
-        var task = _tasks.FindBy(id, (task, key) => task.Id == key).Value;
+        var task = _tasks.FindBy(id, (task, key) => task.Id == key);
         if (task == null) return;
-        _tasks.Remove(task);
+        _tasks.Remove(task.Value);
         _repository.SaveTasks(_tasks);
     }
 
     public void ToggleTaskComplete(int id)
     {
-        var task = _tasks.FindBy(id, (task, key) => task.Id == key).Value;
+        var task = _tasks.FindBy(id, (task, key) => task.Id == key);
         if (task == null) return;
-        task.Completed = !task.Completed;
+        task.Value.Completed = !task.Value.Completed;
         _repository.SaveTasks(_tasks);
     }
 }

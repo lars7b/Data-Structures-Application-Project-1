@@ -11,8 +11,13 @@ public class JsonTaskRepository(string filePath) : ITaskRepository
         if (!File.Exists(filePath)) return new MyArray<TaskItem>();
 
         var json = File.ReadAllText(filePath);
-        var tasks = JsonSerializer.Deserialize<MyArray<TaskItem>>(json);
-        return tasks ?? new MyArray<TaskItem>();
+        var items = JsonSerializer.Deserialize<TaskItem[]>(json);
+
+        var tasks = new MyArray<TaskItem>();
+        if (items != null)
+            foreach (var item in items)
+                tasks.Add(item);
+        return tasks;
     }
 
     public void SaveTasks(MyArray<TaskItem> tasks)
