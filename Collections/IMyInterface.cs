@@ -14,7 +14,9 @@ public interface IMyCollection<T>
     IMyIterator<T> GetIterator(); //todo: make custom Iterator, cant use System.Collections.Generic
     IEnumerator<T> GetEnumerator();
 }
+
 public record Result<T>(bool Succes, T Value);
+
 public interface IMyIterator<T>
 {
     bool HasNext();
