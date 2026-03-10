@@ -30,7 +30,7 @@ public class TaskService : ITaskService
 
     public void RemoveTask(int id)
     {
-        var task = _tasks.FindBy(id, (task, key) =>  task.Id == key).Value;
+        var task = _tasks.FindBy(id, (task, key) => task.Id == key).Value;
         if (task == null) return;
         _tasks.Remove(task);
         _repository.SaveTasks(_tasks);
