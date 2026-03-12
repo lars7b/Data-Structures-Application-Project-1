@@ -8,11 +8,17 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
     private readonly MyArray<Developer> _users;
+    private bool _loggedIn;
+    public Developer? LoggedInUser { get; set;}
     public UserService(IUserRepository repository)
     {
         _repository = repository;
         _users = _repository.LoadAllUsers();
+        _loggedIn = false;
     }
+
+    public bool LoggedIn { get => _loggedIn; set => value = false; }
+
     public void AddUser(string name)
     {
         var newId = Count() > 0 ? _users[^1].Id + 1 : 1;
@@ -31,11 +37,19 @@ public class UserService : IUserService
         return _users;
     }
 
-    public void RemoveUser(int id)
+    public void RemoveUser(string name)
     {
-        var user = _users.FindBy(id, (user, key) => user.Id == key);
+        var user = _users.FindBy(name, (user, key) => user.Name == key);
         if(user == null) return;
         _users.Remove(user.Value);
         _repository.SaveUsers(_users);
+    }
+
+    public void LoginUser(string name)
+    {
+        var user = _users.FindBy(name, (user, key) => user.Name == key);
+        if (user == null) return;
+        LoggedInUser = user?.Value;
+        _loggedIn = !_loggedIn;
     }
 }

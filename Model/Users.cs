@@ -11,9 +11,10 @@ public class Admin : IAdminPrivileges
     public Authorization Rights { get => _rights; set => value = Authorization.Admin; }
     public int Id { get; set; }
     public string Name { get; set; }
-    public Admin(string name, int key)
+    public Admin(int key)
     {
-        Name = name;
+        Rights = Authorization.Admin;
+        Name = "Admin";
         Key = key;
     }
 }
@@ -25,6 +26,7 @@ public class Developer : IDeveloper
     public string Name { get; set; }
     public Developer(string name)
     {
+        Rights = Authorization.Dev;
         Name = name;
     }
 }
