@@ -14,10 +14,12 @@ public class UserService : IUserService
     {
         _repository = repository;
         _users = _repository.LoadAllUsers();
+        //var user = "Admin";
+        //var result = _users.FindBy(user, (user, key) => user.Name == key);
         _loggedIn = false;
     }
 
-    public bool LoggedIn { get => _loggedIn; set => value = false; }
+    public bool LoggedIn { get => _loggedIn; set => _ = false; }
 
     public void AddUser(string name)
     {

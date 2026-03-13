@@ -11,22 +11,23 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
         while (true)
         {
             DisplayTasks(service1.GetAllTasks(), service2.GetAllUsers());
+            Console.WriteLine($"Hello, {service2.LoggedInUser?.Name}");
+            if(service2.LoggedInUser?.Name == "Admin")
+            {
+                Console.WriteLine("a. Add User");
+                Console.WriteLine("r. Remove User");
+            }
             Console.WriteLine("1. Sign up/Login");
             Console.WriteLine("\nOptions:");
 
             if (service2.LoggedIn == true)
             {
-                Console.WriteLine($"Hello, {service2.LoggedInUser?.Name}");
-                if(service2.LoggedInUser?.Name == "Admin")
-                {
-                    Console.WriteLine("a. Add User");
-                    Console.WriteLine("r. Remove User");
-                }
                 Console.WriteLine("2. Add Task");
                 Console.WriteLine("3. Remove Task");
                 Console.WriteLine("4. Toggle Task State");
                 Console.WriteLine("5. Exit");
             }
+
             var option = Prompt("Select an option: ");
             switch (option)
             {
@@ -77,12 +78,12 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
         }
     }
 
-    private static void DisplayTasks(IMyCollection<TaskItem> tasks)
-    {
-        Console.Clear();
-        Console.WriteLine("==== ToDo List ====");
-        foreach (var task in tasks) Console.WriteLine($"{task}");
-    }
+    // private static void DisplayTasks(IMyCollection<TaskItem> tasks)
+    // {
+    //     Console.Clear();
+    //     Console.WriteLine("==== ToDo List ====");
+    //     foreach (var task in tasks) Console.WriteLine($"{task}");
+    // }
     private static void DisplayTasks(IMyCollection<TaskItem> tasks, IMyCollection<Developer> users)
     {
         Console.Clear();
