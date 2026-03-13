@@ -12,21 +12,22 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
         {
             DisplayTasks(service1.GetAllTasks(), service2.GetAllUsers());
             Console.WriteLine($"Hello, {service2.LoggedInUser?.Name}");
+            Console.WriteLine("\nOptions:");
+            Console.WriteLine("1. Sign up/Login");
+
             if(service2.LoggedInUser?.Name == "Admin")
             {
                 Console.WriteLine("a. Add User");
                 Console.WriteLine("r. Remove User");
             }
-            Console.WriteLine("1. Sign up/Login");
-            Console.WriteLine("\nOptions:");
 
-            if (service2.LoggedIn == true)
+            if (service2.LoggedIn != false)
             {
                 Console.WriteLine("2. Add Task");
                 Console.WriteLine("3. Remove Task");
                 Console.WriteLine("4. Toggle Task State");
-                Console.WriteLine("5. Exit");
             }
+            Console.WriteLine("5. Exit");
 
             var option = Prompt("Select an option: ");
             switch (option)

@@ -10,16 +10,21 @@ public class UserService : IUserService
     private readonly MyArray<Developer> _users;
     private bool _loggedIn;
     public Developer? LoggedInUser { get; set;}
+
+    public bool LoggedIn { get => _loggedIn; set => _ = false; }
+
     public UserService(IUserRepository repository)
     {
         _repository = repository;
         _users = _repository.LoadAllUsers();
-        //var user = "Admin";
-        //var result = _users.FindBy(user, (user, key) => user.Name == key);
+        var user = "Admin";
+        var result = _users.FindBy(user, (user, key) => user.Name == key);
+        if(result == null)
+        {
+            _users.Add(new Admin(0));
+        }
         _loggedIn = false;
     }
-
-    public bool LoggedIn { get => _loggedIn; set => _ = false; }
 
     public void AddUser(string name)
     {
