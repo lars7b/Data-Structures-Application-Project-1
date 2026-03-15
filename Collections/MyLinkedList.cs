@@ -3,11 +3,12 @@ using System.Security.AccessControl;
 
 namespace Project_1.Collections;
 
-public class MyLinkedList<T> : IMyCollection<T>
+public class MyLinkedList<T> : IMyCollection<T>, IEnumerable<T>, IEnumerable
 {
     private Node? head;
     private Node? tail;
     private int _count;
+    public bool Dirty { get; set; }
     public int Count
     {
         get
@@ -40,6 +41,7 @@ public class MyLinkedList<T> : IMyCollection<T>
     {
         head = null;
         tail = null;
+        Dirty = false;
     }
 
     public void Add(T data)
@@ -52,16 +54,17 @@ public class MyLinkedList<T> : IMyCollection<T>
         }
         else
         {
-            tail.Next = newNode;
+            tail!.Next = newNode;
             tail = newNode;
         }
         Count++;
+        Dirty = true;
     }
 
     public void Remove(T item)
     {
         if (head == null) return;
-        if (head.Data.Equals(item))
+        if (object.Equals(head.Data, item))
         {
             head = head.Next;
             Count--;
@@ -70,14 +73,13 @@ public class MyLinkedList<T> : IMyCollection<T>
             {
                 tail = null;
             }
-
             return;
         }
 
         Node current = head;
         while (current.Next != null)
         {
-            if (current.Next.Data.Equals(item))
+            if (object.Equals(current.Next.Data, item))
             {
                 current.Next = current.Next.Next;
                 Count--;
@@ -97,7 +99,7 @@ public class MyLinkedList<T> : IMyCollection<T>
         Node? current = head;
         while (current != null)
         {
-            if (comparer(current.Data, key))
+            if (current.Data != null && comparer(current.Data, key))
             {
                 return current.Data;
             }
@@ -168,13 +170,43 @@ public class MyLinkedList<T> : IMyCollection<T>
 
     public IMyIterator<T> GetIterator() //cant use System.Collections.Generic
     {
-        throw new NotImplementedException();
+        return new LinkedListIterator(head);
+    }
+
+    private class LinkedListIterator : IMyIterator<T>
+    {
+        private readonly Node? head;
+        private Node? current;
+
+        public LinkedListIterator(Node? startNode)
+        {
+            head = startNode;
+            current = startNode;
+        }
+
+        public bool HasNext()
+        {
+            return current != null;
+        }
+
+        public T Next()
+        {
+            if (current == null) throw new InvalidOperationException("End of list.");
+            T data = current.Data!;
+            current = current.Next;
+            return data;
+        }
+
+        public void Reset()
+        {
+            current = head;
+        }
     }
 
     public IEnumerator<T> GetEnumerator()
     {
-        Node current = head;
-        while (head != null)
+        Node? current = head;
+        while (current != null)
         {
             if (current.Data != null)
             {
@@ -182,5 +214,10 @@ public class MyLinkedList<T> : IMyCollection<T>
             }
             current = current.Next;
         }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }
