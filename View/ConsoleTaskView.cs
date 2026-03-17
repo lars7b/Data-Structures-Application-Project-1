@@ -23,7 +23,7 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
                 Console.WriteLine("d. Remove User From Task");
             }
 
-            if (service2.LoggedIn != false)
+            if (service2.LoggedInUser != null)
             {
                 Console.WriteLine("2. Add Task");
                 Console.WriteLine("3. Remove Task");
