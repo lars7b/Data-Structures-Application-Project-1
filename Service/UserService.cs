@@ -43,7 +43,12 @@ public class UserService : IUserService
     {
         return _users;
     }
-
+    public IUser FindUser(string name)
+    {
+        var user = _users.FindBy(name, (user, key) => user.Name == key).Value;
+        if (user != null) return user;
+        return null;
+    }
     public void RemoveUser(string name)
     {
         var user = _users.FindBy(name, (user, key) => user.Name == key);

@@ -19,6 +19,8 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
             {
                 Console.WriteLine("a. Add User");
                 Console.WriteLine("r. Remove User");
+                Console.WriteLine("a. Add User To Task");
+                Console.WriteLine("r. Remove User From Task");
             }
 
             if (service2.LoggedIn != false)
@@ -39,11 +41,28 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
                         if (name != null) service2.AddUser(name);
                     }
                     break;
-                case "r":
+                case "b":
                     if(service2.LoggedInUser?.Name == "Admin")
                     {
                         var name = Prompt("Enter a Name");
                         if (name != null) service2.RemoveUser(name);
+                    }
+                    break;
+                case "c":
+                    if(service2.LoggedInUser?.Name == "Admin")
+                    {
+                        var id = Prompt("Enter task id: ");
+                        var name = Prompt("Enter task id: ");
+                        if (id != null && name != null)
+                            if(int.TryParse(id, out var result))
+                                service1.AssignTaskToUser(result, service2.FindUser(name));
+                    }
+                    break;
+                case "d":
+                    if(service2.LoggedInUser?.Name == "Admin")
+                    {
+                        var id = Prompt("Enter Id: ");
+                        if (int.TryParse(id, out var result)) service1.RemoveUserFromTask(result);
                     }
                     break;
                 case "1":

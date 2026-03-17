@@ -28,6 +28,21 @@ public class TaskService : ITaskService
         _repository.SaveTasks(_tasks);
     }
 
+    public void AssignTaskToUser(int id, IUser user)
+    {
+        var taskItem = _tasks.FindBy(id, (task, key) => task.Id == key).Value;
+        if (taskItem == null) return;
+        taskItem.AssignedTo = user;
+        _repository.SaveTasks(_tasks);
+    }
+
+    public void RemoveUserFromTask(int id)
+    {
+        var taskItem = _tasks.FindBy(id, (task, key) => task.Id == key).Value;
+        if (taskItem == null) return;
+        taskItem.AssignedTo = null;
+        _repository.SaveTasks(_tasks);
+    }
     public void RemoveTask(int id)
     {
         var task = _tasks.FindBy(id, (task, key) => task.Id == key);
