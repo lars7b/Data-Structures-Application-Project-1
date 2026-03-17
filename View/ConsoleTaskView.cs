@@ -82,7 +82,7 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
                         var removeIdStr = Prompt("Enter task id to remove: ");
                         if (int.TryParse(removeIdStr, out var removeId)) service1.RemoveTask(removeId);
                     }
-                    Console.WriteLine("You don't have the right to do this");
+                    // Console.WriteLine("You don't have the right to do this");
                     break;
                 case "4":
                     var toggleIdStr = Prompt("Enter task id to toggle: ");

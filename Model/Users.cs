@@ -31,7 +31,7 @@ public class Admin : IAdminPrivileges
     private Authorization _rights;
 
     public int Key { get; set; }
-    public Authorization Rights { get => _rights; set => value = Authorization.Admin; }
+    public Authorization Rights { get => _rights; set => _rights = value; }
     public int Id { get; set; }
     public string Name { get; set; }
     public Admin(int key)
@@ -44,7 +44,7 @@ public class Admin : IAdminPrivileges
 public class Developer : IDeveloper
 {
     private Authorization _rights;
-    public Authorization Rights { get => _rights; set => value = Authorization.Dev; }
+    public Authorization Rights { get => _rights; set => _rights = value; }
     public int Id { get; set; }
     public string Name { get; set; }
     public Developer(string name)

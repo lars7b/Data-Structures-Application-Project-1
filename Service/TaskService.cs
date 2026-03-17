@@ -30,15 +30,15 @@ public class TaskService : ITaskService
 
     public void AssignTaskToUser(int id, IUser user)
     {
-        var taskItem = _tasks.FindBy(id, (task, key) => task.Id == key).Value;
+        var taskItem = _tasks.FindBy(id, (task, key) => task.Id == key)?.Value;
         if (taskItem == null) return;
-        taskItem.AssignedTo = user;
+        taskItem.AssignedTo = user.Name;
         _repository.SaveTasks(_tasks);
     }
 
     public void RemoveUserFromTask(int id)
     {
-        var taskItem = _tasks.FindBy(id, (task, key) => task.Id == key).Value;
+        var taskItem = _tasks.FindBy(id, (task, key) => task.Id == key)?.Value;
         if (taskItem == null) return;
         taskItem.AssignedTo = null;
         _repository.SaveTasks(_tasks);
