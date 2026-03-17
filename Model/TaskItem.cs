@@ -10,6 +10,6 @@ public class TaskItem
     public override string ToString()
     {
         var status = Completed ? "[✓]" : "[ ]";
-        return AssignedTo == null ? $"{status} {Id}: {Description}": $"Assigned To:{AssignedTo.Name}; {status} {Id}: {Description}";
+        return AssignedTo == null ? $"{status} {Id}: {Description}": $"; {status} Assigned To: {AssignedTo.Name} {Id}: {Description}";
     }
 }
