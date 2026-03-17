@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Nodes;
 using Project_1.Collections;
 using Project_1.Model;
 
@@ -8,13 +7,15 @@ namespace Project_1.Repository;
 public class JsonTaskRepository : ITaskRepository
 {
     private readonly string _filePath;
-    public JsonTaskRepository(string filePath) => _filePath = filePath;
+
+    public JsonTaskRepository(string filePath)
+    {
+        _filePath = filePath;
+    }
+
     public MyArray<TaskItem> LoadTasks()
     {
-        if (!File.Exists(_filePath))
-        {
-            File.Create(_filePath);
-        }
+        if (!File.Exists(_filePath)) return new MyArray<TaskItem>();
 
         var json = File.ReadAllText(_filePath);
         var items = JsonSerializer.Deserialize<TaskItem[]>(json);

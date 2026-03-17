@@ -28,28 +28,30 @@ public enum Authorization
 
 public class Admin : IAdminPrivileges
 {
-    private Authorization _rights;
-
-    public int Key { get; set; }
-    public Authorization Rights { get => _rights; set => _rights = value; }
-    public int Id { get; set; }
-    public string Name { get; set; }
     public Admin(int key)
     {
         Rights = Authorization.Admin;
         Name = "Admin";
         Key = key;
     }
-}
-public class Developer : IDeveloper
-{
-    private Authorization _rights;
-    public Authorization Rights { get => _rights; set => _rights = value; }
+
+    public int Key { get; set; }
+    public Authorization Rights { get; set; }
+
     public int Id { get; set; }
     public string Name { get; set; }
+}
+
+public class Developer : IDeveloper
+{
     public Developer(string name)
     {
         Rights = Authorization.Dev;
         Name = name;
     }
+
+    public Authorization Rights { get; set; }
+
+    public int Id { get; set; }
+    public string Name { get; set; }
 }

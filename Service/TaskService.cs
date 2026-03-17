@@ -20,12 +20,19 @@ public class TaskService : ITaskService
         return _tasks;
     }
 
-    public void AddTask(string description)
+    public IMyCollection<TaskItem> GetTasksByPriority(Priority priority)
     {
-        var newId = _tasks.Count > 0 ? _tasks[^1].Id + 1 : 1;
-        var newTask = new TaskItem { Id = newId, Description = description, Completed = false };
-        _tasks.Add(newTask);
-        _repository.SaveTasks(_tasks);
+        return _tasks.Filter(x => x.Priority == priority);
+    }
+
+    public IMyCollection<TaskItem> GetTasksByStatus(Status status)
+    {
+        return _tasks.Filter(x => x.Status == status);
+    }
+
+    public IMyCollection<TaskItem> GetTasksByDateCreated(DateTime date)
+    {
+        return _tasks.Filter(x => x.CreatedAt.Date == date.Date);
     }
 
     public void AssignTaskToUser(int id, IUser user)
@@ -43,6 +50,15 @@ public class TaskService : ITaskService
         taskItem.AssignedTo = null;
         _repository.SaveTasks(_tasks);
     }
+
+    public void AddTask(string description, Priority priority = Priority.None, Status status = Status.Todo)
+    {
+        var newId = _tasks.Count > 0 ? _tasks[^1].Id + 1 : 1;
+        var newTask = new TaskItem { Id = newId, Description = description, Priority = priority, Status = status };
+        _tasks.Add(newTask);
+        _repository.SaveTasks(_tasks);
+    }
+
     public void RemoveTask(int id)
     {
         var task = _tasks.FindBy(id, (task, key) => task.Id == key);
@@ -51,11 +67,26 @@ public class TaskService : ITaskService
         _repository.SaveTasks(_tasks);
     }
 
-    public void ToggleTaskComplete(int id)
+    public void ToggleStatus(int id)
     {
         var task = _tasks.FindBy(id, (task, key) => task.Id == key);
         if (task == null) return;
-        task.Value.Completed = !task.Value.Completed;
+        task.Value.Status = task.Value.Status switch
+        {
+            Status.Todo => Status.InProgress,
+            Status.InProgress => Status.Done,
+            Status.Done => Status.InProgress,
+            _ => Status.Todo
+        };
+
+        _repository.SaveTasks(_tasks);
+    }
+
+    public void ChangePriority(int id, Priority priority)
+    {
+        var task = _tasks.FindBy(id, (task, key) => task.Id == key);
+        if (task == null) return;
+        task.Value.Priority = priority;
         _repository.SaveTasks(_tasks);
     }
 }

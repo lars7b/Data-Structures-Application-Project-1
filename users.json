@@ -3,5 +3,10 @@
     "Rights": 0,
     "Id": 1,
     "Name": "Admin"
+  },
+  {
+    "Rights": 1,
+    "Id": 2,
+    "Name": "Day"
   }
 ]
