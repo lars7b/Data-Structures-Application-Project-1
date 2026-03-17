@@ -8,10 +8,13 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
-        const string filePath = "tasks.jsons";
+        const string filePath = "tasks.json";
+        const string filePath1 = "users.json";
         var repository = new JsonTaskRepository(filePath);
+        var repository1 = new UserRepository(filePath1);
         var service = new TaskService(repository);
-        var view = new ConsoleTaskView(service);
+        var service1 = new UserService(repository1);
+        var view = new ConsoleTaskView(service, service1);
 
         view.Run();
     }
