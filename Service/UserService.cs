@@ -3,7 +3,7 @@ using Project_1.Repository;
 
 namespace Project_1.Service;
 
-public class UserService : IUserService
+public class UserService : IUserService<User>
 {
     private readonly IUserRepository _repository;
     private readonly MyArray<Developer> _users;
@@ -15,7 +15,7 @@ public class UserService : IUserService
         _users = _repository.LoadAllUsers();
         var user = "Admin";
         var result = _users.FindBy(user, (user, key) => user.Name == key);
-        if (result == null) _users.Add(new Admin(0));
+        if (result == null) _users.Add(new Admin());
         _loggedIn = false;
     }
 
@@ -30,7 +30,7 @@ public class UserService : IUserService
     public void AddUser(string name)
     {
         var newId = Count() > 0 ? _users[^1].Id + 1 : 1;
-        var newUser = new Developer(name) { Id = newId, Name = name, Rights = Authorization.Dev };
+        var newUser = new Developer(name) { Id = newId, Name = name};
         _users.Add(newUser);
         _repository.SaveUsers(_users);
     }
@@ -45,11 +45,11 @@ public class UserService : IUserService
         return _users;
     }
 
-    public IUser FindUser(string name)
+    public Result<User> FindUser(string name)
     {
         var user = _users.FindBy(name, (user, key) => user.Name == key).Value;
-        if (user != null) return user;
-        return null;
+        if (user != null) return new Result<User>(true, user);
+        return new Result<User>(false, null);
     }
 
     public void RemoveUser(string name)
@@ -68,3 +68,4 @@ public class UserService : IUserService
         _loggedIn = !_loggedIn;
     }
 }
+public record Result<T>(bool found, T Value);
