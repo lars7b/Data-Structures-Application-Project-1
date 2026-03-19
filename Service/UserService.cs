@@ -3,7 +3,7 @@ using Project_1.Repository;
 
 namespace Project_1.Service;
 
-public class UserService : IUserService<User>
+public class UserService : IUserService<IUser>
 {
     private readonly IUserRepository _repository;
     private readonly MyArray<Developer> _users;
@@ -24,7 +24,7 @@ public class UserService : IUserService<User>
         set => _ = false;
     }
 
-    public void AddUser(string name, User who)
+    public void AddUser(string name, IUser who)
     {
         if(!(who.Acces == Authorization.Admin)) return;
         var newId = Count() > 0 ? _users[^1].Id + 1 : 1;
@@ -43,14 +43,14 @@ public class UserService : IUserService<User>
         return _users;
     }
 
-    public Result<User> FindUser(string name)
+    public Result<IUser> FindUser(string name)
     {
         var user = _users.FindBy(name, (user, key) => user.Name == key)?.Value;
-        if (user != null) return new Result<User>(true, user);
-        return new Result<User>(false, null);
+        if (user != null) return new Result<IUser>(true, user);
+        return new Result<IUser>(false, null);
     }
 
-    public void RemoveUser(string name, User who)
+    public void RemoveUser(string name, IUser who)
     {
         if(!(who.Acces == Authorization.Admin)) return;
         var user = _users.FindBy(name, (user, key) => user.Name == key);

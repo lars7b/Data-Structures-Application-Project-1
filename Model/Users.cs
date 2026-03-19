@@ -3,23 +3,31 @@ public enum Authorization
     Admin, //0
     Dev //1
 }
-public abstract class User
+public interface IUser
 {
     public int Id{get;set;}
     public string Name{get;set;}
     public Authorization Acces{get;set;}
 }
-public class Developer : User
+public class Developer : IUser
 {
     public Developer(string name) : base()
     {
         Name = name;
         Acces = Authorization.Dev;
     }
+
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public Authorization Acces { get; set; }
 }
-public class Admin : User
+public class Admin : IUser
 {
     public int Key{get;}
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public Authorization Acces { get; set; }
+
     public Admin() : base()
     {
         Name = "Admin";

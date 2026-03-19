@@ -4,7 +4,7 @@ using Project_1.Service;
 
 namespace Project_1.View;
 
-public class ConsoleTaskView(ITaskService service1, IUserService<User> service2) : ITaskView
+public class ConsoleTaskView(ITaskService service1, IUserService<IUser> service2) : ITaskView
 {
     public void Run()
     {
