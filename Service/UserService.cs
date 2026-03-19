@@ -27,8 +27,9 @@ public class UserService : IUserService<User>
         set => _ = false;
     }
 
-    public void AddUser(string name)
+    public void AddUser(string name, User who)
     {
+        if(!(who.Acces == Authorization.Admin)) return;
         var newId = Count() > 0 ? _users[^1].Id + 1 : 1;
         var newUser = new Developer(name) { Id = newId, Name = name};
         _users.Add(newUser);
@@ -47,13 +48,14 @@ public class UserService : IUserService<User>
 
     public Result<User> FindUser(string name)
     {
-        var user = _users.FindBy(name, (user, key) => user.Name == key).Value;
+        var user = _users.FindBy(name, (user, key) => user.Name == key)?.Value;
         if (user != null) return new Result<User>(true, user);
         return new Result<User>(false, null);
     }
 
-    public void RemoveUser(string name)
+    public void RemoveUser(string name, User who)
     {
+        if(!(who.Acces == Authorization.Admin)) return;
         var user = _users.FindBy(name, (user, key) => user.Name == key);
         if (user == null) return;
         _users.Remove(user.Value);
@@ -68,4 +70,4 @@ public class UserService : IUserService<User>
         _loggedIn = !_loggedIn;
     }
 }
-public record Result<T>(bool found, T Value);
+public record Result<T>(bool result, T Value);

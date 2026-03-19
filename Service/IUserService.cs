@@ -8,8 +8,8 @@ public interface IUserService<T>
     public Developer? LoggedInUser { get; set; }
     IMyCollection<Developer> GetAllUsers();
     public int Count();
-    public void AddUser(string name);
+    public void AddUser(string name, User who);
     public Result<T> FindUser(string name);
-    public void RemoveUser(string name);
+    public void RemoveUser(string name, User who);
     public void LoginUser(string name);
 }

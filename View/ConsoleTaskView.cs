@@ -15,11 +15,11 @@ public class ConsoleTaskView(ITaskService service1, IUserService<User> service2)
             Console.WriteLine("\nOptions:");
             Console.WriteLine("1. Sign up/Login");
 
-            if (service2.LoggedInUser?.Name == "Admin")
+            if (service2.LoggedInUser?.Acces == Authorization.Admin)
             {
                 Console.WriteLine("a. Add User");
                 Console.WriteLine("b. Remove User");
-                Console.WriteLine("c. Add User To Task");
+                Console.WriteLine("c. Assign Task To Different User");
                 Console.WriteLine("d. Remove User From Task");
             }
 
@@ -38,38 +38,30 @@ public class ConsoleTaskView(ITaskService service1, IUserService<User> service2)
             switch (option)
             {
                 case "a":
-                    if (service2.LoggedInUser?.Name == "Admin")
-                    {
-                        var name = Prompt("Enter a Name: ");
-                        if (name != null) service2.AddUser(name);
-                    }
-
+                    var name = Prompt("Enter a Name: ");
+                    if (name != null) service2.AddUser(name, service2.LoggedInUser);
                     break;
+                    
                 case "b":
-                    if (service2.LoggedInUser?.Name == "Admin")
-                    {
-                        var name = Prompt("Enter a Name: ");
-                        if (name != null) service2.RemoveUser(name);
-                    }
-
+                    name = Prompt("Enter a Name: ");
+                    if (name != null) service2.RemoveUser(name, service2.LoggedInUser);
                     break;
+
                 case "c":
-                    if (service2.LoggedInUser?.Name == "Admin")
+                    var id = Prompt("Enter task id: ");
+                    name = Prompt("Enter name: ");
+                    if (id != null && name != null)
                     {
-                        var id = Prompt("Enter task id: ");
-                        var name = Prompt("Enter name: ");
-                        if (id != null && name != null)
-                            if (int.TryParse(id, out var result))
-                                service1.AssignTaskToUser(result, service2.FindUser(name));
+                        var found = service2.FindUser(name);
+                        if(!found.result) break;
+                        if (int.TryParse(id, out var result1 )) service1.AssignTaskToUser(result1, found.Value);
+                        break;
                     }
-
                     break;
+                
                 case "d":
-                    if (service2.LoggedInUser?.Name == "Admin")
-                    {
-                        var id = Prompt("Enter Id: ");
-                        if (int.TryParse(id, out var result)) service1.RemoveUserFromTask(result);
-                    }
+                    id = Prompt("Enter Id: ");
+                    if (int.TryParse(id, out var result)) service1.RemoveUserFromTask(result);
 
                     break;
                 case "1":
@@ -81,18 +73,15 @@ public class ConsoleTaskView(ITaskService service1, IUserService<User> service2)
                     if (description != null) service1.AddTask(description);
                     break;
                 case "3":
-                    if (service2.LoggedInUser?.Name == "Admin")
-                    {
-                        var removeIdStr = Prompt("Enter task id to remove: ");
-                        if (int.TryParse(removeIdStr, out var removeId)) service1.RemoveTask(removeId);
-                    }
-
-                    // Console.WriteLine("You don't have the right to do this");
+                    var removeIdStr = Prompt("Enter task id to remove: ");
+                    if (int.TryParse(removeIdStr, out var removeId)) service1.RemoveTask(removeId);
                     break;
+
                 case "4":
                     var toggleIdStr = Prompt("Enter task id to toggle status: ");
                     if (int.TryParse(toggleIdStr, out var toggleId)) service1.ToggleStatus(toggleId);
                     break;
+
                 case "5":
                     var changeIdStr = Prompt("Enter task id to change priority: ");
                     if (int.TryParse(changeIdStr, out var changeId))
@@ -101,8 +90,8 @@ public class ConsoleTaskView(ITaskService service1, IUserService<User> service2)
                         if (Enum.TryParse<Priority>(priorityStr, out var priority))
                             service1.ChangePriority(changeId, priority);
                     }
-
                     break;
+
                 case "6":
                     Console.WriteLine("\nOptions:");
                     Console.WriteLine("1. Filter by Priority");

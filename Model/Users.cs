@@ -7,10 +7,10 @@ public abstract class User
 {
     public int Id{get;set;}
     public string Name{get;set;}
+    public Authorization Acces{get;set;}
 }
 public class Developer : User
 {
-    public Authorization Acces{get;set;}
     public Developer(string name) : base()
     {
         Name = name;
@@ -19,12 +19,11 @@ public class Developer : User
 }
 public class Admin : User
 {
-    public Authorization Acces{get;set;}
-    public int Key{get;}
+    // public int Key{get;}
     public Admin() : base()
     {
         Acces = Authorization.Admin;
-        Key = 0;
+        // Key = 0;
     }
 }
 // public class Developer : IDeveloper
