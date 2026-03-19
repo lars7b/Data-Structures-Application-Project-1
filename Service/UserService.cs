@@ -13,8 +13,8 @@ public class UserService : IUserService<User>
     {
         _repository = repository;
         _users = _repository.LoadAllUsers();
-        var user = "Admin";
-        var result = _users.FindBy(user, (user, key) => user.Name == key);
+        var name = "Admin";
+        var result = _users.FindBy(name, (name, key) => name.Name == "Admin");
         if (result == null) _users.Add(new Admin());
         _loggedIn = false;
     }

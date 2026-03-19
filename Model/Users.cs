@@ -19,11 +19,12 @@ public class Developer : User
 }
 public class Admin : User
 {
-    // public int Key{get;}
+    public int Key{get;}
     public Admin() : base()
     {
+        Name = "Admin";
         Acces = Authorization.Admin;
-        // Key = 0;
+        Key = 0;
     }
 }
 // public class Developer : IDeveloper
