@@ -15,13 +15,13 @@ public class ConsoleTaskView(ITaskService service1, IUserService<User> service2)
             Console.WriteLine("\nOptions:");
             Console.WriteLine("1. Sign up/Login");
 
-            if (service2.LoggedInUser?.Acces == Authorization.Admin)
-            {
+            // if (service2.LoggedInUser?.Acces == Authorization.Admin)
+            // {
                 Console.WriteLine("a. Add User");
                 Console.WriteLine("b. Remove User");
                 Console.WriteLine("c. Assign Task To Different User");
                 Console.WriteLine("d. Remove User From Task");
-            }
+            // }
 
             if (service2.LoggedInUser != null)
             {
