@@ -183,7 +183,7 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService) 
             table.AddRow(
                 i < todoRows.Count ? Markup.Escape(todoRows[i].ToString()) : string.Empty,
                 i < doingRows.Count ? Markup.Escape(doingRows[i].ToString()) : string.Empty,
-                i < doneRows.Count ? Markup.Escape(doingRows[i].ToString()) : string.Empty);
+                i < doneRows.Count ? Markup.Escape(doneRows[i].ToString()) : string.Empty);
 
         return table;
     }
