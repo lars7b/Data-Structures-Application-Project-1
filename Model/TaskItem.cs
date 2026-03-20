@@ -11,16 +11,7 @@ public class TaskItem
 
     public override string ToString()
     {
-        var status = Status switch
-        {
-            Status.Todo => "[To Do]",
-            Status.InProgress => "[In Progress]",
-            Status.Done => "[Done]",
-            _ => "[To Do]"
-        };
-
-        return AssignedTo == null
-            ? $"Id: {Id}, Status: {status}, Description: {Description}, Priority: {Priority}, Date: {CreatedAt.ToShortDateString()}"
-            : $"Assigned To: {AssignedTo}, Id: {Id}, Status: {status}, Description: {Description}, Priority: {Priority}, Date: {CreatedAt.ToShortDateString()}";
+        var assignee = AssignedTo ?? "None";
+        return $"[{Id}] *{assignee}* ({Priority}) {Description} |{CreatedAt.ToShortDateString()}|";
     }
 }

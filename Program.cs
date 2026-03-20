@@ -14,7 +14,7 @@ internal static class Program
         var repository1 = new UserRepository(filePath1);
         var service = new TaskService(repository);
         var service1 = new UserService(repository1);
-        var view = new ConsoleTaskView(service, service1);
+        var view = new KanbanTaskView(service, service1);
 
         view.Run();
     }
