@@ -8,16 +8,10 @@ public class TaskItem
     public Status Status { get; set; }
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
     public string? AssignedTo { get; set; }
-    
+
     public override string ToString()
     {
-        var status = Status switch
-        {
-            Status.Todo => "Todo",
-            Status.InProgress => "Doing",
-            Status.Done => "Done",
-            _ => "Todo"
-        };
-        return $"[{Id}] ({Priority}) {Description} |{CreatedAt.ToShortDateString()}|";
+        var assignee = AssignedTo ?? "None";
+        return $"[{Id}] *{assignee}* ({Priority}) {Description} |{CreatedAt.ToShortDateString()}|";
     }
 }
