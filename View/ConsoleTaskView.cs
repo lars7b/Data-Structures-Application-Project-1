@@ -4,14 +4,13 @@ using Project_1.Service;
 
 namespace Project_1.View;
 
-public class ConsoleTaskView(ITaskService service1, IUserService<IUser> service2) : ITaskView
+public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITaskView
 {
     public void Run()
     {
         while (true)
         {
             DisplayTasks(service1.GetAllTasks(), service2.GetAllUsers());
-            Console.WriteLine($"Hello, {service2.LoggedInUser?.Name}");
             Console.WriteLine("\nOptions:");
             Console.WriteLine("1. Sign up/Login");
 
@@ -23,14 +22,11 @@ public class ConsoleTaskView(ITaskService service1, IUserService<IUser> service2
                 Console.WriteLine("d. Remove User From Task");
             // }
 
-            if (service2.LoggedInUser != null)
-            {
                 Console.WriteLine("2. Add Task");
                 Console.WriteLine("3. Remove Task");
                 Console.WriteLine("4. Toggle Task Stats");
                 Console.WriteLine("5. Toggle Task Priority");
                 Console.WriteLine("6. Filter or Sort Tasks");
-            }
 
             Console.WriteLine("7. Exit");
 
@@ -39,12 +35,12 @@ public class ConsoleTaskView(ITaskService service1, IUserService<IUser> service2
             {
                 case "a":
                     var name = Prompt("Enter a Name: ");
-                    if (name != null) service2.AddUser(name, service2.LoggedInUser);
+                    if (name != null) service2.AddUser(name);
                     break;
                     
                 case "b":
                     name = Prompt("Enter a Name: ");
-                    if (name != null) service2.RemoveUser(name, service2.LoggedInUser);
+                    if (name != null) service2.RemoveUser(name);
                     break;
 
                 case "c":
@@ -53,7 +49,7 @@ public class ConsoleTaskView(ITaskService service1, IUserService<IUser> service2
                     if (id != null && name != null)
                     {
                         var found = service2.FindUser(name);
-                        if(!found.result) break;
+                        if(!found.isSucces == false) break;
                         if (int.TryParse(id, out var result1 )) service1.AssignTaskToUser(result1, found.Value);
                         break;
                     }
@@ -66,7 +62,6 @@ public class ConsoleTaskView(ITaskService service1, IUserService<IUser> service2
                     break;
                 case "1":
                     var login = Prompt("Enter a name: ");
-                    if (login != null) service2.LoginUser(login);
                     break;
                 case "2":
                     var description = Prompt("Enter task description: ");
@@ -145,7 +140,7 @@ public class ConsoleTaskView(ITaskService service1, IUserService<IUser> service2
     //     Console.WriteLine("==== ToDo List ====");
     //     foreach (var task in tasks) Console.WriteLine($"{task}");
     // }
-    private static void DisplayTasks(IMyCollection<TaskItem> tasks, IMyCollection<Developer> users)
+    private static void DisplayTasks(IMyCollection<TaskItem> tasks, IMyCollection<User> users)
     {
         Console.Clear();
         if (users.Count > 0)

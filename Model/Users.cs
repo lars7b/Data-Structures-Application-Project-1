@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using Project_1.Collections;
 
 public enum Role
@@ -14,13 +13,16 @@ public class User
     private readonly MyArray<Role> _roles = new();
     public MyArray<Role> Roles => _roles;
 
-    public User(string name)
+    public User(int id, string name)
     {
+        Id = id;
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentException("Name cannot be empty");
         Name = name;
     }
     public void AddRole(Role role)
     {
-        if(_roles.Contains(role))
+        if(!_roles.Contains(role))
             _roles.Add(role);
     }
     public bool HasRole(Role role)

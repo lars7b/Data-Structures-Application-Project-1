@@ -4,6 +4,10 @@ namespace Project_1.Repository;
 
 public interface IUserRepository
 {
-    public MyArray<User> LoadAllUsers();
-    public void SaveUsers(MyArray<User> users);
+    MyArray<User> LoadAllUsers();
+    User? GetById(int id);
+    void Add(User user);
+    void Update(User user);
+    void Delete(User user);
+    void SaveUsers(MyArray<User> users);
 }

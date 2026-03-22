@@ -2,14 +2,11 @@ using Project_1.Collections;
 
 namespace Project_1.Service;
 
-public interface IUserService<T>
+public interface IUserService
 {
-    public bool LoggedIn { get; set; }
-    public Developer? LoggedInUser { get; set; }
-    IMyCollection<Developer> GetAllUsers();
-    public int Count();
-    public void AddUser(string name, IUser who);
-    public Result<T> FindUser(string name);
-    public void RemoveUser(string name, IUser who);
-    public void LoginUser(string name);
+    IMyCollection<User> GetAllUsers();
+    int Count();
+    void AddUser(string name);
+    Result<User> FindUser(string name);
+    bool RemoveUser(string name);
 }

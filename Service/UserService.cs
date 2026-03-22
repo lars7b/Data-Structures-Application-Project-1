@@ -3,32 +3,21 @@ using Project_1.Repository;
 
 namespace Project_1.Service;
 
-public class UserService : IUserService<IUser>
+public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
-    private readonly MyArray<Developer> _users;
-    private bool _loggedIn;
+    private readonly MyArray<User> _users;
 
     public UserService(IUserRepository repository)
     {
         _repository = repository;
         _users = _repository.LoadAllUsers();
-        _loggedIn = false;
     }
 
-    public Developer? LoggedInUser { get; set; }
-
-    public bool LoggedIn
+    public void AddUser(string name)
     {
-        get => _loggedIn;
-        set => _ = false;
-    }
-
-    public void AddUser(string name, IUser who)
-    {
-        if(!(who.Acces == Authorization.Admin)) return;
-        var newId = Count() > 0 ? _users[^1].Id + 1 : 1;
-        var newUser = new Developer(name) { Id = newId, Name = name};
+        var newId = _users.Any() ? _users.Max(u => u.Id) + 1 : 1;
+        var newUser = new User(newId, name);
         _users.Add(newUser);
         _repository.SaveUsers(_users);
     }
@@ -38,33 +27,28 @@ public class UserService : IUserService<IUser>
         return _users.Count;
     }
 
-    public IMyCollection<Developer> GetAllUsers()
+    public IMyCollection<User> GetAllUsers()
     {
         return _users;
     }
 
-    public Result<IUser> FindUser(string name)
+    public Result<User> FindUser(string name)
     {
         var user = _users.FindBy(name, (user, key) => user.Name == key)?.Value;
-        if (user != null) return new Result<IUser>(true, user);
-        return new Result<IUser>(false, null);
+        if (user != null) return new Result<User>(true, user, "");
+        return new Result<User>(false, null, "User does not exists or cannot be found");
     }
-
-    public void RemoveUser(string name, IUser who)
+    private User? FindByName(string name)
     {
-        if(!(who.Acces == Authorization.Admin)) return;
-        var user = _users.FindBy(name, (user, key) => user.Name == key);
-        if (user == null) return;
-        _users.Remove(user.Value);
+        return _users.FindBy(name, (user, key) => user.Name == key)?.Value;
+    }
+    public bool RemoveUser(string name)
+    {
+        var user = FindByName(name);
+        if(user == null) return false;
+        _users.Remove(user);
         _repository.SaveUsers(_users);
-    }
-
-    public void LoginUser(string name)
-    {
-        var user = _users.FindBy(name, (user, key) => user.Name == key);
-        if (user == null) return;
-        LoggedInUser = user?.Value;
-        _loggedIn = !_loggedIn;
-    }
+        return true;
+    }   
 }
-public record Result<T>(bool result, T Value);
+public record Result<T>(bool isSucces, T? Value, string? Error);

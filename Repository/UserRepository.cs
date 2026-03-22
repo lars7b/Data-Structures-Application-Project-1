@@ -9,27 +9,60 @@ public class UserRepository : IUserRepository
 
     public UserRepository(string filePath)
     {
+        if (string.IsNullOrEmpty(filePath))
+        {
+            throw new ArgumentException("Invalid file path");
+        }
+        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
         _filePath = filePath;
+    }
+
+    public void Add(User user)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Delete(User user)
+    {
+        throw new NotImplementedException();
+    }
+
+    public User? GetById(int id)
+    {
+        throw new NotImplementedException();
     }
 
     public MyArray<User> LoadAllUsers()
     {
-        if (!File.Exists(_filePath)) File.Create(_filePath);
+        if (!File.Exists(_filePath)) File.WriteAllText(_filePath, "[]");
 
         var json = File.ReadAllText(_filePath);
-        var items = JsonSerializer.Deserialize<User[]>(json);
+        try
+        {
+            var items = JsonSerializer.Deserialize<User[]>(json) ?? Array.Empty<User>();
+            var users = new MyArray<User>();
+            if (items != null)
+                foreach (var item in items)
+                    users.Add(item);
+            return users;
+        }
+        catch (JsonException e)
+        {
+            // logging
+            Console.WriteLine($"InnerException: {e.InnerException}, Message: {e.Message}");
+            return new MyArray<User>();
+        }
 
-        var users = new MyArray<User>();
-        if (items != null)
-            foreach (var item in items)
-                users.Add(item);
-
-        return users;
     }
 
     public void SaveUsers(MyArray<User> users)
     {
-        var json = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
+        var json = JsonSerializer.Serialize(users.ToArray(), new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(_filePath, json);
+    }
+
+    public void Update(User user)
+    {
+        throw new NotImplementedException();
     }
 }
