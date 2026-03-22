@@ -12,14 +12,14 @@ public class UserRepository : IUserRepository
         _filePath = filePath;
     }
 
-    public MyArray<Developer> LoadAllUsers()
+    public MyArray<User> LoadAllUsers()
     {
         if (!File.Exists(_filePath)) File.Create(_filePath);
 
         var json = File.ReadAllText(_filePath);
-        var items = JsonSerializer.Deserialize<Developer[]>(json);
+        var items = JsonSerializer.Deserialize<User[]>(json);
 
-        var users = new MyArray<Developer>();
+        var users = new MyArray<User>();
         if (items != null)
             foreach (var item in items)
                 users.Add(item);
@@ -27,7 +27,7 @@ public class UserRepository : IUserRepository
         return users;
     }
 
-    public void SaveUsers(MyArray<Developer> users)
+    public void SaveUsers(MyArray<User> users)
     {
         var json = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(_filePath, json);
