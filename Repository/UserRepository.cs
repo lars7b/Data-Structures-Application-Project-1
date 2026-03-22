@@ -13,7 +13,11 @@ public class UserRepository : IUserRepository
         {
             throw new ArgumentException("Invalid file path");
         }
-        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+        string? directory = Path.GetDirectoryName(filePath);
+        if (!string.IsNullOrWhiteSpace(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
         _filePath = filePath;
     }
 
