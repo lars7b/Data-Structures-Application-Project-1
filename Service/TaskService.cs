@@ -73,9 +73,9 @@ public class TaskService : ITaskService
         if (task == null) return;
         task.Value.Status = task.Value.Status switch
         {
-            Status.Todo => Status.InProgress,
-            Status.InProgress => Status.Done,
-            Status.Done => Status.InProgress,
+            Status.Todo => Status.Doing,
+            Status.Doing => Status.Done,
+            Status.Done => Status.Doing,
             _ => Status.Todo
         };
 

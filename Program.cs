@@ -15,7 +15,7 @@ internal static class Program
         var service = new TaskService(repository);
         var service1 = new UserService(repository1);
         var service2 = new LoginService(repository1);
-        var view = new ConsoleTaskView(service, service1, service2);
+        var view = new KanbanTaskView(service, service1, service2);
 
         view.Run();
     }
