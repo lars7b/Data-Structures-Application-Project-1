@@ -4,7 +4,7 @@ using Project_1.Service;
 
 namespace Project_1.View;
 
-public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITaskView
+public class ConsoleTaskView(ITaskService service1, IUserService service2, ILoginService service3) : ITaskView
 {
     public void Run()
     {
@@ -35,7 +35,8 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
             {
                 case "a":
                     var name = Prompt("Enter a Name: ");
-                    if (name != null) service2.AddUser(name);
+                    var password = Prompt("Enter a Password");
+                    if (name != null) service2.AddUser(name, password);
                     break;
                     
                 case "b":
@@ -62,6 +63,9 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
                     break;
                 case "1":
                     var login = Prompt("Enter a name: ");
+                    password = Prompt("Enter a password");
+                    if(login != null && password != null)
+                        service3.Login(login, password);;
                     break;
                 case "2":
                     var description = Prompt("Enter task description: ");

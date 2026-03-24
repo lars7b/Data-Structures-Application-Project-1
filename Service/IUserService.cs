@@ -6,7 +6,7 @@ public interface IUserService
 {
     IMyCollection<User> GetAllUsers();
     int Count();
-    void AddUser(string name);
+    void AddUser(string name, string password);
     Result<User> FindUser(string name);
     bool RemoveUser(string name);
 }

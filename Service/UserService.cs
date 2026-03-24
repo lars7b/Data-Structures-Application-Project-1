@@ -14,10 +14,10 @@ public class UserService : IUserService
         _users = _repository.LoadAllUsers();
     }
 
-    public void AddUser(string name)
+    public void AddUser(string name, string password)
     {
         var newId = _users.Any() ? _users.Max(u => u.Id) + 1 : 1;
-        var newUser = new User(newId, name);
+        var newUser = new User(newId, name, password);
         _users.Add(newUser);
         _repository.SaveUsers(_users);
     }

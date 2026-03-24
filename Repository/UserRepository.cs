@@ -35,6 +35,12 @@ public class UserRepository : IUserRepository
     {
         throw new NotImplementedException();
     }
+    public User? GetByName(string name)
+    {
+        var users = LoadAllUsers().ToArray();
+        var find = users.FirstOrDefault(_=>_.Name == name);
+        return find;
+    }
 
     public MyArray<User> LoadAllUsers()
     {
