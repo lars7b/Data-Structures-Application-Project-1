@@ -4,7 +4,7 @@ public interface ILoginService
 {
     bool IsAdmin { get; set; }
     bool LoggedIn { get; set; }
-    User? loggedIn{get;set;}
+    User? Luser{get;set;}
     User? Login(string name, string password);
     void Logout();
 }
@@ -15,13 +15,13 @@ public class LoginService : ILoginService
     public bool IsAdmin { get; set; }
     private User? _loggedinUser;
     private User _admin;
-    public User? LoggedInUser
+    public User? Luser
     {
         get
         {
             return _loggedinUser;
         }
-        private set
+        set
         {
             _loggedinUser = value;
         }
@@ -42,19 +42,19 @@ public class LoginService : ILoginService
         {
             IsAdmin = true;
             LoggedIn = true;
-            LoggedInUser = _admin;
+            Luser = _admin;
         }
         var user = _userRepository.GetByName(name);
         if(user == null) return null;
         if(user.Password != password) return null;
-        LoggedInUser = user;
+        Luser = user;
         IsAdmin = false;
         LoggedIn = true;
-        return LoggedInUser;
+        return Luser;
     }
     public void Logout()
     {
-        LoggedInUser = null;
+        Luser = null;
         LoggedIn = false;
         IsAdmin = false;
     }
