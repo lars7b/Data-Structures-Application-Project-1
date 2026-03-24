@@ -8,7 +8,7 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T>
 
     public MyArray()
     {
-        _array = [];
+        _array = new T[2];
         Count = 0;
     }
 
@@ -29,7 +29,7 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T>
 
     public void Add(T item)
     {
-        if (Count == _array.Length) Resize(_array, Count + 1);
+        if (Count == _array.Length) Resize(_array, Count * 2);
         _array[Count] = item;
         Count++;
         Dirty = true;
