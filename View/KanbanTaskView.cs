@@ -30,7 +30,7 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService) 
                     choices.Add("Remove User from Task");
                 }
 
-                choices.Add("Add Tasks");
+                choices.Add("Add Task");
 
                 if (isAdmin)
                     choices.Add("Remove Tasks");
@@ -155,12 +155,17 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService) 
     private void DrawTable()
     {
         AnsiConsole.Clear();
-        AnsiConsole.Write(new Text("Kanban Task Board", Color.Blue).Centered());
-        AnsiConsole.Write(CreateTable(taskService.GetAllTasks()));
+        AnsiConsole.Write(CreatePanel(taskService.GetAllTasks()));
         AnsiConsole.Write(
             new Markup(
                     "Tasks have the following Structure: [blue][[ID]][/] [purple]*Assignee*[/] [orange3](Priority)[/] [navajowhite1]Description[/] [red]|Date|[/]")
                 .Centered());
+    }
+
+    private static Panel CreatePanel(IMyCollection<TaskItem> tasks)
+    {
+        return new Panel(CreateTable(tasks)).Header("[blue bold]Kanban Task Board[/]").RoundedBorder()
+            .Expand();
     }
 
     private static Table CreateTable(IMyCollection<TaskItem> tasks)
@@ -181,10 +186,17 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService) 
 
         for (var i = 0; i < maxRows; i++)
             table.AddRow(
-                i < todoRows.Count ? Markup.Escape(todoRows[i].ToString()) : string.Empty,
-                i < doingRows.Count ? Markup.Escape(doingRows[i].ToString()) : string.Empty,
-                i < doneRows.Count ? Markup.Escape(doneRows[i].ToString()) : string.Empty);
+                i < todoRows.Count ? ToMarkUp(todoRows[i]) : string.Empty,
+                i < doingRows.Count ? ToMarkUp(doingRows[i]) : string.Empty,
+                i < doneRows.Count ? ToMarkUp(doneRows[i]) : string.Empty);
 
         return table;
+    }
+
+    private static string ToMarkUp(TaskItem item)
+    {
+        var assignee = item.AssignedTo != null ? $" *{Markup.Escape(item.AssignedTo)}*" : string.Empty;
+        return
+            $"[[{item.Id}]]{assignee} ({item.Priority}) {Markup.Escape(item.Description)} |{item.CreatedAt.ToShortDateString()}|";
     }
 }
