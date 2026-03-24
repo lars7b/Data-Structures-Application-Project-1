@@ -4,26 +4,32 @@ using Project_1.Service;
 
 namespace Project_1.View;
 
-public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITaskView
+public class ConsoleTaskView(ITaskService service1, IUserService service2, ILoginService service3) : ITaskView
 {
     public void Run()
     {
         while (true)
         {
             DisplayTasks(service1.GetAllTasks(), service2.GetAllUsers());
-            Console.WriteLine($"Hello, {service2.LoggedInUser?.Name}");
             Console.WriteLine("\nOptions:");
-            Console.WriteLine("1. Sign up/Login");
+            if (!service3.LoggedIn)
+            {
+                Console.WriteLine("1. Sign up/Login");
+            }
+            else
+            {
+                Console.WriteLine("1.logout");
+            }
 
-            if (service2.LoggedInUser?.Name == "Admin")
+            if (service3.LoggedIn && service3.IsAdmin)
             {
                 Console.WriteLine("a. Add User");
                 Console.WriteLine("b. Remove User");
-                Console.WriteLine("c. Add User To Task");
+                Console.WriteLine("c. Assign Task To Different User");
                 Console.WriteLine("d. Remove User From Task");
             }
 
-            if (service2.LoggedInUser != null)
+            if(service3.LoggedIn)
             {
                 Console.WriteLine("2. Add Task");
                 Console.WriteLine("3. Remove Task");
@@ -38,61 +44,58 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
             switch (option)
             {
                 case "a":
-                    if (service2.LoggedInUser?.Name == "Admin")
-                    {
-                        var name = Prompt("Enter a Name: ");
-                        if (name != null) service2.AddUser(name);
-                    }
-
+                    var name = Prompt("Enter a Name: ");
+                    var password = Prompt("Enter a Password");
+                    if (name != null) service2.AddUser(name, password);
                     break;
+                    
                 case "b":
-                    if (service2.LoggedInUser?.Name == "Admin")
-                    {
-                        var name = Prompt("Enter a Name: ");
-                        if (name != null) service2.RemoveUser(name);
-                    }
-
+                    name = Prompt("Enter a Name: ");
+                    if (name != null) service2.RemoveUser(name);
                     break;
+
                 case "c":
-                    if (service2.LoggedInUser?.Name == "Admin")
+                    var id = Prompt("Enter task id: ");
+                    name = Prompt("Enter name: ");
+                    if (id != null && name != null)
                     {
-                        var id = Prompt("Enter task id: ");
-                        var name = Prompt("Enter name: ");
-                        if (id != null && name != null)
-                            if (int.TryParse(id, out var result))
-                                service1.AssignTaskToUser(result, service2.FindUser(name));
+                        var found = service2.FindUser(name);
+                        if(found.isSucces == false) break;
+                        if (int.TryParse(id, out var result1 )) service1.AssignTaskToUser(result1, found.Value.Name);
+                        break;
                     }
-
                     break;
+                
                 case "d":
-                    if (service2.LoggedInUser?.Name == "Admin")
-                    {
-                        var id = Prompt("Enter Id: ");
-                        if (int.TryParse(id, out var result)) service1.RemoveUserFromTask(result);
-                    }
+                    id = Prompt("Enter Id: ");
+                    if (int.TryParse(id, out var result)) service1.RemoveUserFromTask(result);
 
                     break;
                 case "1":
+                    if (service3.LoggedIn)
+                    {
+                        service3.Logout();
+                        break;
+                    }
                     var login = Prompt("Enter a name: ");
-                    if (login != null) service2.LoginUser(login);
+                    password = Prompt("Enter a password");
+                    if(login != null && password != null)
+                        service3.Login(login, password);;
                     break;
                 case "2":
                     var description = Prompt("Enter task description: ");
-                    if (description != null) service1.AddTask(description);
+                    if (description != null) service1.AddTask(description, service3.Luser.Name);
                     break;
                 case "3":
-                    if (service2.LoggedInUser?.Name == "Admin")
-                    {
-                        var removeIdStr = Prompt("Enter task id to remove: ");
-                        if (int.TryParse(removeIdStr, out var removeId)) service1.RemoveTask(removeId);
-                    }
-
-                    // Console.WriteLine("You don't have the right to do this");
+                    var removeIdStr = Prompt("Enter task id to remove: ");
+                    if (int.TryParse(removeIdStr, out var removeId)) service1.RemoveTask(removeId);
                     break;
+
                 case "4":
                     var toggleIdStr = Prompt("Enter task id to toggle status: ");
                     if (int.TryParse(toggleIdStr, out var toggleId)) service1.ToggleStatus(toggleId);
                     break;
+
                 case "5":
                     var changeIdStr = Prompt("Enter task id to change priority: ");
                     if (int.TryParse(changeIdStr, out var changeId))
@@ -101,8 +104,8 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
                         if (Enum.TryParse<Priority>(priorityStr, out var priority))
                             service1.ChangePriority(changeId, priority);
                     }
-
                     break;
+
                 case "6":
                     Console.WriteLine("\nOptions:");
                     Console.WriteLine("1. Filter by Priority");
@@ -156,7 +159,7 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
     //     Console.WriteLine("==== ToDo List ====");
     //     foreach (var task in tasks) Console.WriteLine($"{task}");
     // }
-    private static void DisplayTasks(IMyCollection<TaskItem> tasks, IMyCollection<Developer> users)
+    private static void DisplayTasks(IMyCollection<TaskItem> tasks, IMyCollection<User> users)
     {
         Console.Clear();
         if (users.Count > 0)

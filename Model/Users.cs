@@ -1,57 +1,36 @@
-public enum Authorization
+using Project_1.Collections;
+
+public enum Role
 {
     Admin, //0
     Dev //1
 }
-// public class Developer : IDeveloper
-// {
-//     private class Admin : IAdminPrivileges
-//     {
-//         public int Key { get; set; }
-//         public Authorization Rights { get; set; }
-//         public int Id { get; set; }
-//         public string Name { get; set; }
-//         public Admin(int key)
-//         {
-//             Key = key;
-//             Name = "Admin";
-//         }
-//     }
-//     public Authorization Rights { get; set; }
-//     public int Id { get; set; }
-//     public string Name { get; set; }
-//     public Developer(string name)
-//     {
-//         Name = name;
-//     }
-// }
 
-public class Admin : IAdminPrivileges
+public class User
 {
-    public Admin(int key)
+    public int Id{get;private set;}
+    public string Name{get;private set;}
+    public string Password{get;set;}
+    private readonly MyArray<Role> _roles = new();
+    public MyArray<Role> Roles => _roles;
+
+    public User(int id, string name, string password)
     {
-        Rights = Authorization.Admin;
-        Name = "Admin";
-        Key = key;
-    }
-
-    public int Key { get; set; }
-    public Authorization Rights { get; set; }
-
-    public int Id { get; set; }
-    public string Name { get; set; }
-}
-
-public class Developer : IDeveloper
-{
-    public Developer(string name)
-    {
-        Rights = Authorization.Dev;
+        Id = id;
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentException("Name cannot be empty");
+        if (string.IsNullOrEmpty(password))
+            throw new ArgumentException("Name cannot be empty");
         Name = name;
+        Password = password;
     }
-
-    public Authorization Rights { get; set; }
-
-    public int Id { get; set; }
-    public string Name { get; set; }
+    public void AddRole(Role role)
+    {
+        if(!_roles.Contains(role))
+            _roles.Add(role);
+    }
+    public bool HasRole(Role role)
+    {
+        return _roles.Contains(role);
+    }
 }

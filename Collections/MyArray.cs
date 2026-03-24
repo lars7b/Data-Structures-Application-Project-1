@@ -29,7 +29,7 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T>
 
     public void Add(T item)
     {
-        if (Count == _array.Length) Resize(_array, Count + 1);
+        if (Count == _array.Length) Resize(_array, _array.Length == 0 ? 4 : _array.Length * 2);
         _array[Count] = item;
         Count++;
         Dirty = true;
@@ -45,7 +45,7 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T>
         return result;
     }
 
-    public Result<T>? FindBy<K>(K key, Func<T, K, bool> comparer)
+    public Result<T> FindBy<K>(K key, Func<T, K, bool> comparer)
     {
         for (var i = 0; i < Count; i++)
             if (comparer(_array[i], key))
@@ -82,11 +82,17 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T>
     public void Remove(T item)
     {
         for (var i = 0; i < Count; i++)
+        {
             if (Equals(_array[i], item))
             {
-                for (var j = i; j < Count - 1; j++) _array[j] = _array[j + 1];
+                for (var j = i; j < Count - 1; j++) 
+                    _array[j] = _array[j + 1];
+                _array[Count - 1] = default!;
                 Count--;
+                Dirty = true;
+                return;
             }
+        }
     }
 
     public void Sort(Comparison<T> comparison)
@@ -114,11 +120,5 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T>
         var nArray = new T[size];
         for (var i = 0; i < array.Length; i++) nArray[i] = array[i];
         _array = nArray;
-    }
-
-    internal void Add(Admin admin)
-    {
-        // throw new NotImplementedException();
-        Add(admin);
     }
 }
