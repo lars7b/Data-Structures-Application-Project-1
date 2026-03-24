@@ -14,8 +14,8 @@ public class UserService : IUserService
         _repository = repository;
         _users = _repository.LoadAllUsers();
         var user = "Admin";
-        var result = _users.FindBy(user, (user, key) => user.Name == key);
-        if (result == null) _users.Add(new Admin(0));
+        var result = _users.FindBy(user, (u, key) => u.Name == key);
+        if (result == null) _users.Add(new Developer(user) {Rights =  Authorization.Admin});
         _loggedIn = false;
     }
 

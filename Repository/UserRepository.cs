@@ -14,7 +14,7 @@ public class UserRepository : IUserRepository
 
     public MyArray<Developer> LoadAllUsers()
     {
-        if (!File.Exists(_filePath)) File.Create(_filePath);
+        if (!File.Exists(_filePath)) return new MyArray<Developer>();
 
         var json = File.ReadAllText(_filePath);
         var items = JsonSerializer.Deserialize<Developer[]>(json);

@@ -115,10 +115,4 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T>
         for (var i = 0; i < array.Length; i++) nArray[i] = array[i];
         _array = nArray;
     }
-
-    internal void Add(Admin admin)
-    {
-        // throw new NotImplementedException();
-        Add(admin);
-    }
 }
