@@ -23,7 +23,6 @@ public class UserRepository : IUserRepository
         if (items != null)
             foreach (var item in items)
                 users.Add(item);
-
         return users;
     }
 
