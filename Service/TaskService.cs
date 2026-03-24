@@ -35,11 +35,11 @@ public class TaskService : ITaskService
         return _tasks.Filter(x => x.CreatedAt.Date == date.Date);
     }
 
-    public void AssignTaskToUser(int id, User user)
+    public void AssignTaskToUser(int id, string username)
     {
         var taskItem = _tasks.FindBy(id, (task, key) => task.Id == key)?.Value;
         if (taskItem == null) return;
-        taskItem.AssignedTo = user.Name;
+        taskItem.AssignedTo = username;
         _repository.SaveTasks(_tasks);
     }
 

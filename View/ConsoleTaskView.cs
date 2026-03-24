@@ -12,21 +12,31 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2, ILogi
         {
             DisplayTasks(service1.GetAllTasks(), service2.GetAllUsers());
             Console.WriteLine("\nOptions:");
-            Console.WriteLine("1. Sign up/Login");
+            if (!service3.LoggedIn)
+            {
+                Console.WriteLine("1. Sign up/Login");
+            }
+            else
+            {
+                Console.WriteLine("1.logout");
+            }
 
-            // if (service2.LoggedInUser?.Acces == Authorization.Admin)
-            // {
+            if (service3.LoggedIn && service3.IsAdmin)
+            {
                 Console.WriteLine("a. Add User");
                 Console.WriteLine("b. Remove User");
                 Console.WriteLine("c. Assign Task To Different User");
                 Console.WriteLine("d. Remove User From Task");
-            // }
+            }
 
+            if(service3.LoggedIn)
+            {
                 Console.WriteLine("2. Add Task");
                 Console.WriteLine("3. Remove Task");
                 Console.WriteLine("4. Toggle Task Stats");
                 Console.WriteLine("5. Toggle Task Priority");
                 Console.WriteLine("6. Filter or Sort Tasks");
+            }
 
             Console.WriteLine("7. Exit");
 
@@ -50,8 +60,8 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2, ILogi
                     if (id != null && name != null)
                     {
                         var found = service2.FindUser(name);
-                        if(!found.isSucces == false) break;
-                        if (int.TryParse(id, out var result1 )) service1.AssignTaskToUser(result1, found.Value);
+                        if(found.isSucces == false) break;
+                        if (int.TryParse(id, out var result1 )) service1.AssignTaskToUser(result1, found.Value.Name);
                         break;
                     }
                     break;
@@ -62,6 +72,11 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2, ILogi
 
                     break;
                 case "1":
+                    if (service3.LoggedIn)
+                    {
+                        service3.Logout();
+                        break;
+                    }
                     var login = Prompt("Enter a name: ");
                     password = Prompt("Enter a password");
                     if(login != null && password != null)

@@ -35,7 +35,7 @@ public class UserService : IUserService
     public Result<User> FindUser(string name)
     {
         var user = _users.FindBy(name, (user, key) => user.Name == key)?.Value;
-        if (user != null) return new Result<User>(true, user, "");
+        if (user != null) return new Result<User>(true, user, "user found");
         return new Result<User>(false, null, "User does not exists or cannot be found");
     }
     private User? FindByName(string name)
