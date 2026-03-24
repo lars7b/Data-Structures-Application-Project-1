@@ -4,11 +4,8 @@ public class TaskItem
 {
     public int Id { get; init; }
     public required string Description { get; init; }
-    public bool Completed { get; set; }
-
-    public override string ToString()
-    {
-        var status = Completed ? "[✓]" : "[ ]";
-        return $"{status} {Id}: {Description}";
-    }
+    public Priority Priority { get; set; }
+    public Status Status { get; set; }
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public string? AssignedTo { get; set; }
 }
