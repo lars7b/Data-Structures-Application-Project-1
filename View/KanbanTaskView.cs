@@ -69,13 +69,11 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService) 
                     var userToAssign = userService.FindUser(usernameToAssign);
                     if (userToAssign != null)
                         taskService.AssignTaskToUser(taskIdToAssign, userToAssign);
-                    else
-                        AnsiConsole.MarkupLine("[red] User not found.[/]");
                     break;
 
                 case "Remove User from Task":
                     var taskIdToRemoveUser = AnsiConsole.Ask<int>("Enter task id: ");
-                    taskService.RemoveTask(taskIdToRemoveUser);
+                    taskService.RemoveUserFromTask(taskIdToRemoveUser);
                     break;
 
                 case "Add Task":
