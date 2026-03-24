@@ -51,10 +51,10 @@ public class TaskService : ITaskService
         _repository.SaveTasks(_tasks);
     }
 
-    public void AddTask(string description, Priority priority = Priority.None, Status status = Status.Todo)
+    public void AddTask(string description, string username, Priority priority = Priority.None, Status status = Status.Todo)
     {
         var newId = _tasks.Count > 0 ? _tasks[^1].Id + 1 : 1;
-        var newTask = new TaskItem { Id = newId, Description = description, Priority = priority, Status = status };
+        var newTask = new TaskItem { Id = newId, Description = description, AssignedTo= username, Priority = priority, Status = status };
         _tasks.Add(newTask);
         _repository.SaveTasks(_tasks);
     }

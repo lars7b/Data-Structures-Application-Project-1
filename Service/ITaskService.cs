@@ -9,7 +9,7 @@ public interface ITaskService
     IMyCollection<TaskItem> GetTasksByPriority(Priority priority);
     IMyCollection<TaskItem> GetTasksByStatus(Status status);
     IMyCollection<TaskItem> GetTasksByDateCreated(DateTime date);
-    void AddTask(string description, Priority priority = Priority.None, Status status = Status.Todo);
+    void AddTask(string description, string username, Priority priority = Priority.None, Status status = Status.Todo);
     public void AssignTaskToUser(int id, string username);
     void RemoveTask(int id);
     public void RemoveUserFromTask(int id);

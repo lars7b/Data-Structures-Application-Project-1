@@ -84,7 +84,7 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2, ILogi
                     break;
                 case "2":
                     var description = Prompt("Enter task description: ");
-                    if (description != null) service1.AddTask(description);
+                    if (description != null) service1.AddTask(description, service3.Luser.Name);
                     break;
                 case "3":
                     var removeIdStr = Prompt("Enter task id to remove: ");
