@@ -7,27 +7,28 @@ namespace Project_1.Repository;
 public class JsonTaskRepository : ITaskRepository
 {
     private readonly string _filePath;
+    private readonly IMyCollection<TaskItem> _tasks;
 
-    public JsonTaskRepository(string filePath)
+    public JsonTaskRepository(string filePath, IMyCollection<TaskItem> tasks)
     {
         _filePath = filePath;
+        _tasks = tasks;
     }
 
-    public MyArray<TaskItem> LoadTasks()
+    public IMyCollection<TaskItem> LoadTasks()
     {
-        if (!File.Exists(_filePath)) return new MyArray<TaskItem>();
+        if (!File.Exists(_filePath)) return _tasks;
 
         var json = File.ReadAllText(_filePath);
         var items = JsonSerializer.Deserialize<TaskItem[]>(json);
 
-        var tasks = new MyArray<TaskItem>();
         if (items != null)
             foreach (var item in items)
-                tasks.Add(item);
-        return tasks;
+                _tasks.Add(item);
+        return _tasks;
     }
 
-    public void SaveTasks(MyArray<TaskItem> tasks)
+    public void SaveTasks(IMyCollection<TaskItem> tasks)
     {
         var json = JsonSerializer.Serialize(tasks, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(_filePath, json);

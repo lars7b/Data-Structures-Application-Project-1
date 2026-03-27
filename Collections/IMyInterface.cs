@@ -1,6 +1,6 @@
 namespace Project_1.Collections;
 
-public interface IMyCollection<T>
+public interface IMyCollection<T> : IEnumerable<T>
 {
     int Count { get; }
     bool Dirty { get; set; }

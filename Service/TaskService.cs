@@ -7,7 +7,7 @@ namespace Project_1.Service;
 public class TaskService : ITaskService
 {
     private readonly ITaskRepository _repository;
-    private readonly MyArray<TaskItem> _tasks;
+    private readonly IMyCollection<TaskItem> _tasks;
 
     public TaskService(ITaskRepository repository)
     {
@@ -53,10 +53,13 @@ public class TaskService : ITaskService
 
     public void AddTask(string description, Priority priority = Priority.None, Status status = Status.Todo)
     {
-        var newId = _tasks.Count > 0 ? _tasks[^1].Id + 1 : 1;
+        /*
+        var newId = _tasks.Count > 0 ? _tasks[^1].Id + 1 : 1; // use reduce
         var newTask = new TaskItem { Id = newId, Description = description, Priority = priority, Status = status };
         _tasks.Add(newTask);
         _repository.SaveTasks(_tasks);
+        */
+        throw new NotImplementedException();
     }
 
     public void RemoveTask(int id)

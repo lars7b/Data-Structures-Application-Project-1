@@ -6,7 +6,7 @@ namespace Project_1.Service;
 public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
-    private readonly MyArray<Developer> _users;
+    private readonly IMyCollection<Developer> _users;
     private bool _loggedIn;
 
     public UserService(IUserRepository repository)
@@ -31,12 +31,15 @@ public class UserService : IUserService
         set => _ = false;
     }
 
-    public void AddUser(string name)
+    public void AddUser(string name) 
     {
-        var newId = Count() > 0 ? _users[^1].Id + 1 : 1;
+        /*
+        var newId = Count() > 0 ? _users[^1].Id + 1 : 1; // use reduce
         var newUser = new Developer(name) { Id = newId, Name = name, Rights = Authorization.Dev };
         _users.Add(newUser);
         _repository.SaveUsers(_users);
+        */
+        throw new NotImplementedException();
     }
 
     public int Count()
