@@ -33,13 +33,16 @@ public class UserService : IUserService
 
     public void AddUser(string name) 
     {
-        /*
-        var newId = Count() > 0 ? _users[^1].Id + 1 : 1; // use reduce
+        var newId = 1;
+
+        while (_users.FindBy(newId, (user, key) => user.Id == key) != null)
+        {
+            newId++;
+        }
+
         var newUser = new Developer(name) { Id = newId, Name = name, Rights = Authorization.Dev };
         _users.Add(newUser);
         _repository.SaveUsers(_users);
-        */
-        throw new NotImplementedException();
     }
 
     public int Count()
