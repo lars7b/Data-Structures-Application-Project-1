@@ -53,13 +53,16 @@ public class TaskService : ITaskService
 
     public void AddTask(string description, Priority priority = Priority.None, Status status = Status.Todo)
     {
-        /*
-        var newId = _tasks.Count > 0 ? _tasks[^1].Id + 1 : 1; // use reduce
+        var newId = 1;
+
+        while (_tasks.FindBy(newId, (task, key) => task.Id == key) != null)
+        {
+            newId++;
+        }
+
         var newTask = new TaskItem { Id = newId, Description = description, Priority = priority, Status = status };
         _tasks.Add(newTask);
         _repository.SaveTasks(_tasks);
-        */
-        throw new NotImplementedException();
     }
 
     public void RemoveTask(int id)
