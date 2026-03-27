@@ -4,6 +4,6 @@ namespace Project_1.Repository;
 
 public interface IUserRepository
 {
-    public MyArray<Developer> LoadAllUsers();
-    public void SaveUsers(MyArray<Developer> users);
+    public IMyCollection<Developer> LoadAllUsers();
+    public void SaveUsers(IMyCollection<Developer> users);
 }

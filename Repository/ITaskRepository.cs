@@ -5,6 +5,6 @@ namespace Project_1.Repository;
 
 public interface ITaskRepository
 {
-    MyArray<TaskItem> LoadTasks();
-    void SaveTasks(MyArray<TaskItem> tasks);
+    IMyCollection<TaskItem> LoadTasks();
+    void SaveTasks(IMyCollection<TaskItem> tasks);
 }

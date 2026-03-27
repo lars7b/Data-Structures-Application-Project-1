@@ -176,18 +176,18 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService) 
             .AddColumn("[bold olive]Doing[/]")
             .AddColumn("[bold darkgreen]Done[/]");
 
-        var todoRows = (MyArray<TaskItem>)tasks.Filter(x => x.Status == Status.Todo);
-        var doingRows = (MyArray<TaskItem>)tasks.Filter(x => x.Status == Status.Doing);
-        var doneRows = (MyArray<TaskItem>)tasks.Filter(x => x.Status == Status.Done);
+        var todoRows = tasks.Filter(x => x.Status == Status.Todo);
+        var doingRows = tasks.Filter(x => x.Status == Status.Doing);
+        var doneRows = tasks.Filter(x => x.Status == Status.Done);
 
         var maxRows = Math.Max(todoRows.Count, Math.Max(doingRows.Count, doneRows.Count));
-
+        /* use GetEnumerator
         for (var i = 0; i < maxRows; i++)
             table.AddRow(
                 i < todoRows.Count ? ToMarkUp(todoRows[i]) : string.Empty,
                 i < doingRows.Count ? ToMarkUp(doingRows[i]) : string.Empty,
                 i < doneRows.Count ? ToMarkUp(doneRows[i]) : string.Empty);
-
+        */
         return table;
     }
 
