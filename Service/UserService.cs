@@ -7,35 +7,52 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
     private readonly IMyCollection<User> _users;
+    private int _nextId;
 
     public UserService(IUserRepository repository)
     {
         _repository = repository;
         _users = _repository.LoadAllUsers();
+        _nextId  = _users.Count == 0 ? 1 : _users.Max(_=>_.Id) +1;
     }
 
-    public void AddUser(string name, string password)
+    public bool AddUser(string name, string password)
     {
-        throw new NotImplementedException();
+        if(string.IsNullOrWhiteSpace(name)||string.IsNullOrWhiteSpace(password)) return false;
+        _users.Add(new User(_nextId,name, password));
+        _nextId++;
+        _repository.SaveUsers(_users);
+        return true;
     }
 
     public int Count()
     {
-        throw new NotImplementedException();
+        return _users.Count;
     }
 
-    public User? FindUser(string name)
+    public Result<User>? FindUser(string name)
     {
-        throw new NotImplementedException();
+        return _users.FindBy(name, (result, name) => result.Name == name);
     }
 
     public IMyCollection<User> GetAllUsers()
     {
-        throw new NotImplementedException();
+        return _users;
     }
 
     public bool RemoveUser(string name)
     {
-        throw new NotImplementedException();
+        if(string.IsNullOrWhiteSpace(name)) return false;
+        var result = FindUser(name);
+        if (result.Succes)
+        {
+            _users.Remove(result.Value);
+        }
+        else
+        {
+            return false;
+        }
+        _repository.SaveUsers(_users);
+        return true;
     }
 }
