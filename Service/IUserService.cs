@@ -4,12 +4,9 @@ namespace Project_1.Service;
 
 public interface IUserService
 {
-    public bool LoggedIn { get; set; }
-    public Developer? LoggedInUser { get; set; }
-    IMyCollection<Developer> GetAllUsers();
+    IMyCollection<User> GetAllUsers();
     public int Count();
-    public void AddUser(string name);
-    public IUser? FindUser(string name);
-    public void RemoveUser(string name);
-    public void LoginUser(string name);
+    public void AddUser(string name, string password);
+    public User? FindUser(string name);
+    public bool RemoveUser(string name);
 }

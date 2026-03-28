@@ -1,57 +1,34 @@
-public enum Authorization
+public class User
 {
-    Admin, //0
-    Dev //1
-}
-// public class Developer : IDeveloper
-// {
-//     private class Admin : IAdminPrivileges
-//     {
-//         public int Key { get; set; }
-//         public Authorization Rights { get; set; }
-//         public int Id { get; set; }
-//         public string Name { get; set; }
-//         public Admin(int key)
-//         {
-//             Key = key;
-//             Name = "Admin";
-//         }
-//     }
-//     public Authorization Rights { get; set; }
-//     public int Id { get; set; }
-//     public string Name { get; set; }
-//     public Developer(string name)
-//     {
-//         Name = name;
-//     }
-// }
-
-public class Admin : IAdminPrivileges
-{
-    public Admin(int key)
+    public int Id{get;set;}
+    private string _name;
+    private string _password;
+    public string Name{get => _name;}
+    public string Password{get => _password;}
+    public User(string name, string password)
     {
-        Rights = Authorization.Admin;
-        Name = "Admin";
-        Key = key;
+        _name = name;
+        _password = password;
     }
-
-    public int Key { get; set; }
-    public Authorization Rights { get; set; }
-
-    public int Id { get; set; }
-    public string Name { get; set; }
+    public bool ChangeName(string name)
+    {
+        _name = name;
+        return true;
+    }
+    public bool ChangePassword(string o_passw, string n_passw)
+    {
+        if(Password == o_passw)
+        {
+            _password = n_passw;
+            return true;
+        }
+        return false;
+    }
 }
 
-public class Developer : IDeveloper
+public class Admin : User
 {
-    public Developer(string name)
+    public Admin(string name, string password) : base(name, password)
     {
-        Rights = Authorization.Dev;
-        Name = name;
     }
-
-    public Authorization Rights { get; set; }
-
-    public int Id { get; set; }
-    public string Name { get; set; }
 }

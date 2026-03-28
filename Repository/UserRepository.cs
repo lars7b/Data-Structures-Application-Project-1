@@ -6,20 +6,20 @@ namespace Project_1.Repository;
 public class UserRepository : IUserRepository
 {
     private readonly string _filePath;
-    private readonly IMyCollection<Developer> _users;
+    private readonly IMyCollection<User> _users;
 
-    public UserRepository(string filePath, IMyCollection<Developer> users)
+    public UserRepository(string filePath, IMyCollection<User> users)
     {
         _filePath = filePath;
         _users = users;
     }
 
-    public IMyCollection<Developer> LoadAllUsers()
+    public IMyCollection<User> LoadAllUsers()
     {
         if (!File.Exists(_filePath)) return _users;
 
         var json = File.ReadAllText(_filePath);
-        var items = JsonSerializer.Deserialize<Developer[]>(json);
+        var items = JsonSerializer.Deserialize<User[]>(json);
 
         if (items != null)
             foreach (var item in items)
@@ -27,7 +27,7 @@ public class UserRepository : IUserRepository
         return _users;
     }
 
-    public void SaveUsers(IMyCollection<Developer> users)
+    public void SaveUsers(IMyCollection<User> users)
     {
         var json = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(_filePath, json);

@@ -6,74 +6,36 @@ namespace Project_1.Service;
 public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
-    private readonly IMyCollection<Developer> _users;
-    private bool _loggedIn;
+    private readonly IMyCollection<User> _users;
 
     public UserService(IUserRepository repository)
     {
         _repository = repository;
         _users = _repository.LoadAllUsers();
-        var user = "Admin";
-        var result = _users.FindBy(user, (u, key) => u.Name == key);
-        if (result == null)
-        {
-            _users.Add(new Developer(user) { Rights = Authorization.Admin });
-            _repository.SaveUsers(_users);
-        }
-        _loggedIn = false;
     }
 
-    public Developer? LoggedInUser { get; set; }
-
-    public bool LoggedIn
+    public void AddUser(string name, string password)
     {
-        get => _loggedIn;
-        set => _ = false;
-    }
-
-    public void AddUser(string name) 
-    {
-        var newId = 1;
-
-        while (_users.FindBy(newId, (user, key) => user.Id == key) != null)
-        {
-            newId++;
-        }
-
-        var newUser = new Developer(name) { Id = newId, Name = name, Rights = Authorization.Dev };
-        _users.Add(newUser);
-        _repository.SaveUsers(_users);
+        throw new NotImplementedException();
     }
 
     public int Count()
     {
-        return _users.Count;
+        throw new NotImplementedException();
     }
 
-    public IMyCollection<Developer> GetAllUsers()
+    public User? FindUser(string name)
     {
-        return _users;
+        throw new NotImplementedException();
     }
 
-    public IUser? FindUser(string name)
+    public IMyCollection<User> GetAllUsers()
     {
-        var result = _users.FindBy(name, (user, key) => user.Name == key);
-        return result?.Value;
+        throw new NotImplementedException();
     }
 
-    public void RemoveUser(string name)
+    public bool RemoveUser(string name)
     {
-        var user = _users.FindBy(name, (user, key) => user.Name == key);
-        if (user == null) return;
-        _users.Remove(user.Value);
-        _repository.SaveUsers(_users);
-    }
-
-    public void LoginUser(string name)
-    {
-        var user = _users.FindBy(name, (user, key) => user.Name == key);
-        if (user == null) return;
-        LoggedInUser = user?.Value;
-        _loggedIn = !_loggedIn;
+        throw new NotImplementedException();
     }
 }
