@@ -11,11 +11,11 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
         while (true)
         {
             DisplayTasks(service1.GetAllTasks(), service2.GetAllUsers());
-            Console.WriteLine($"Hello, {service2.LoggedInUser?.Name}");
+            Console.WriteLine($"Hello, {}");
             Console.WriteLine("\nOptions:");
             Console.WriteLine("1. Sign up/Login");
 
-            if (service2.LoggedInUser?.Name == "Admin")
+            if ()
             {
                 Console.WriteLine("a. Add User");
                 Console.WriteLine("b. Remove User");
@@ -23,7 +23,7 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
                 Console.WriteLine("d. Remove User From Task");
             }
 
-            if (service2.LoggedInUser != null)
+            if ()
             {
                 Console.WriteLine("2. Add Task");
                 Console.WriteLine("3. Remove Task");
@@ -38,15 +38,15 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
             switch (option)
             {
                 case "a":
-                    if (service2.LoggedInUser?.Name == "Admin")
+                    if ()
                     {
                         var name = Prompt("Enter a Name: ");
-                        if (name != null) service2.AddUser(name);
+                        if (name != null) ;
                     }
 
                     break;
                 case "b":
-                    if (service2.LoggedInUser?.Name == "Admin")
+                    if ()
                     {
                         var name = Prompt("Enter a Name: ");
                         if (name != null) service2.RemoveUser(name);
@@ -54,18 +54,18 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
 
                     break;
                 case "c":
-                    if (service2.LoggedInUser?.Name == "Admin")
+                    if ()
                     {
                         var id = Prompt("Enter task id: ");
                         var name = Prompt("Enter name: ");
                         if (id != null && name != null)
                             if (int.TryParse(id, out var result))
-                                service1.AssignTaskToUser(result, service2.FindUser(name));
+                                service1.AssignTaskToUser(result, );
                     }
 
                     break;
                 case "d":
-                    if (service2.LoggedInUser?.Name == "Admin")
+                    if ()
                     {
                         var id = Prompt("Enter Id: ");
                         if (int.TryParse(id, out var result)) service1.RemoveUserFromTask(result);
@@ -74,14 +74,14 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
                     break;
                 case "1":
                     var login = Prompt("Enter a name: ");
-                    if (login != null) service2.LoginUser(login);
+                    if (login != null) ;
                     break;
                 case "2":
                     var description = Prompt("Enter task description: ");
                     if (description != null) service1.AddTask(description);
                     break;
                 case "3":
-                    if (service2.LoggedInUser?.Name == "Admin")
+                    if ()
                     {
                         var removeIdStr = Prompt("Enter task id to remove: ");
                         if (int.TryParse(removeIdStr, out var removeId)) service1.RemoveTask(removeId);
@@ -156,7 +156,7 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
     //     Console.WriteLine("==== ToDo List ====");
     //     foreach (var task in tasks) Console.WriteLine($"{task}");
     // }
-    private static void DisplayTasks(IMyCollection<TaskItem> tasks, IMyCollection<Developer> users)
+    private static void DisplayTasks(IMyCollection<TaskItem> tasks, IMyCollection<User> users)
     {
         Console.Clear();
         if (users.Count > 0)
