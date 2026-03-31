@@ -4,18 +4,22 @@ using Project_1.Service;
 
 namespace Project_1.View;
 
-public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITaskView
+public class ConsoleTaskView(ITaskService taskservice, IUserService userservice, LoginService loginservice) : ITaskView
 {
+    private bool _loggedin = false;
     public void Run()
     {
         while (true)
         {
-            DisplayTasks(service1.GetAllTasks(), service2.GetAllUsers());
-            Console.WriteLine($"Hello, {}");
+            DisplayTasks(taskservice.GetAllTasks(), userservice.GetAllUsers());
+            if(_loggedin)
+            {
+                Console.WriteLine($"Hello, {loginservice.CurrentUser.Name}");
+            }
             Console.WriteLine("\nOptions:");
             Console.WriteLine("1. Sign up/Login");
 
-            if ()
+            if (loginservice.CurrentUser.Role == Access.Admin)
             {
                 Console.WriteLine("a. Add User");
                 Console.WriteLine("b. Remove User");
@@ -23,7 +27,7 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
                 Console.WriteLine("d. Remove User From Task");
             }
 
-            if ()
+            if (_loggedin)
             {
                 Console.WriteLine("2. Add Task");
                 Console.WriteLine("3. Remove Task");
@@ -38,7 +42,7 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
             switch (option)
             {
                 case "a":
-                    if ()
+                    if (_loggedin && loginservice.CheckRoles() == Access.Admin)
                     {
                         var name = Prompt("Enter a Name: ");
                         if (name != null) ;
@@ -46,52 +50,59 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
 
                     break;
                 case "b":
-                    if ()
+                    if (_loggedin && loginservice.CheckRoles() == Access.Admin)
                     {
                         var name = Prompt("Enter a Name: ");
-                        if (name != null) service2.RemoveUser(name);
+                        if (name != null) userservice.RemoveUser(name);
                     }
 
                     break;
                 case "c":
-                    if ()
+                    if (_loggedin && loginservice.CheckRoles() == Access.Admin)
                     {
                         var id = Prompt("Enter task id: ");
                         var name = Prompt("Enter name: ");
                         if (id != null && name != null)
                             if (int.TryParse(id, out var result))
-                                service1.AssignTaskToUser(result, );
+                                taskservice.AssignTaskToUser(result, loginservice.CurrentUser);
                     }
 
                     break;
                 case "d":
-                    if ()
+                    if (_loggedin && loginservice.CheckRoles() == Access.Admin)
                     {
                         var id = Prompt("Enter Id: ");
-                        if (int.TryParse(id, out var result)) service1.RemoveUserFromTask(result);
+                        if (int.TryParse(id, out var result)) taskservice.RemoveUserFromTask(result);
                     }
 
                     break;
                 case "1":
                     var login = Prompt("Enter a name: ");
-                    if (login != null) ;
+                    if (login != null)
+                    {
+                        var succes = loginservice.Login(login);
+                        if(succes) _loggedin = true;
+                    }
                     break;
                 case "2":
-                    var description = Prompt("Enter task description: ");
-                    if (description != null) service1.AddTask(description);
+                    if (_loggedin)
+                    {
+                        var description = Prompt("Enter task description: ");
+                        if (description != null) taskservice.AddTask(description);
+                    }
                     break;
                 case "3":
-                    if ()
+                    if (_loggedin)
                     {
                         var removeIdStr = Prompt("Enter task id to remove: ");
-                        if (int.TryParse(removeIdStr, out var removeId)) service1.RemoveTask(removeId);
+                        if (int.TryParse(removeIdStr, out var removeId)) taskservice.RemoveTask(removeId);
                     }
 
                     // Console.WriteLine("You don't have the right to do this");
                     break;
                 case "4":
                     var toggleIdStr = Prompt("Enter task id to toggle status: ");
-                    if (int.TryParse(toggleIdStr, out var toggleId)) service1.ToggleStatus(toggleId);
+                    if (int.TryParse(toggleIdStr, out var toggleId)) taskservice.ToggleStatus(toggleId);
                     break;
                 case "5":
                     var changeIdStr = Prompt("Enter task id to change priority: ");
@@ -99,7 +110,7 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
                     {
                         var priorityStr = Prompt("What priority ");
                         if (Enum.TryParse<Priority>(priorityStr, out var priority))
-                            service1.ChangePriority(changeId, priority);
+                            taskservice.ChangePriority(changeId, priority);
                     }
 
                     break;
@@ -116,18 +127,18 @@ public class ConsoleTaskView(ITaskService service1, IUserService service2) : ITa
                         case "1":
                             var priorityStr = Prompt("Enter priority: ");
                             if (Enum.TryParse<Priority>(priorityStr, out var priority))
-                                DisplayTasks(service1.GetTasksByPriority(priority), service2.GetAllUsers());
+                                DisplayTasks(taskservice.GetTasksByPriority(priority), userservice.GetAllUsers());
                             break;
                         case "2":
                             var statusStr = Prompt("Enter status: ");
                             if (statusStr == null) break;
                             if (Enum.TryParse<Status>(statusStr.Trim(), out var status))
-                                DisplayTasks(service1.GetTasksByStatus(status), service2.GetAllUsers());
+                                DisplayTasks(taskservice.GetTasksByStatus(status), userservice.GetAllUsers());
                             break;
                         case "3":
                             var dateStr = Prompt("Enter date (MM/dd/yyyy): ");
                             if (DateTime.TryParse(dateStr, out var date))
-                                DisplayTasks(service1.GetTasksByDateCreated(date), service2.GetAllUsers());
+                                DisplayTasks(taskservice.GetTasksByDateCreated(date), userservice.GetAllUsers());
                             else
                                 Console.WriteLine("Invalid date.");
                             break;

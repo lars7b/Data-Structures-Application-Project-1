@@ -14,6 +14,11 @@ public class UserRepository : IUserRepository
         _users = users;
     }
 
+    public Result<User> GetUserByUsername(string username)
+    {
+        return _users.FindBy(username, (user, key) => user.Name == key);
+    }
+
     public IMyCollection<User> LoadAllUsers()
     {
         if (!File.Exists(_filePath)) return _users;
