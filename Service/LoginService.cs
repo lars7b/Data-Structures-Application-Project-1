@@ -1,10 +1,13 @@
 using Project_1.Repository;
+using Project_1.Model;
 
-public class LoginService
+namespace Project_1.Service;
+
+public class LoginService : ILoginService
 {
-    private readonly UserRepository _userRepository;
+    private readonly IUserRepository _userRepository;
     public User? CurrentUser{get;set;}
-    public LoginService(UserRepository userRepository)
+    public LoginService(IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }
@@ -27,6 +30,16 @@ public class LoginService
     {
         return CurrentUser.Role;
     }
+    public bool ChangeUserRole(User targetUser, Access newRole)
+    {
+        if(CheckRoles() != Access.Admin)
+        {
+            return false;
+        }
+        targetUser.SetRole(newRole);
+        return true;
+    }
+    
     public bool CompareNames(string name)
     {
         var result = _userRepository.GetUserByUsername(name);

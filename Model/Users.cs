@@ -1,3 +1,4 @@
+namespace Project_1.Model;
 public enum Access
 {
     Basic = 0,
@@ -7,33 +8,38 @@ public enum Access
 public class User
 {
     public int Id{get;private set;}
-    private string _name;
-    private string _password;
+    // private string _name;
+    // private string _password;
     private Access _role;
     public Access Role{get => _role;}
-    public string Name{get => _name;}
+    public string Name{get; private set;}
+    public string Password{get; private set;}
     public User(int id, string name, string password)
     {
         Id = id;
-        _name = name;
-        _password = password;
+        Name = name;
+        Password = password;
         _role = Access.Basic;
     }
     public bool ChangeName(string name)
     {
         if(string.IsNullOrWhiteSpace(name)) return false;
-        _name = name;
+        Name = name;
         return true;
     }
     public bool ChangePassword(string o_passw, string n_passw)
     {
         if(string.IsNullOrWhiteSpace(o_passw)) return false;
-        if(_password == o_passw)
+        if(Password == o_passw)
         {
             if(string.IsNullOrWhiteSpace(n_passw)) return false;
-            _password = n_passw;
+            Password = n_passw;
             return true;
         }
         return false;
+    }
+    internal void SetRole(Access newRole)
+    {
+        _role = newRole;
     }
 }

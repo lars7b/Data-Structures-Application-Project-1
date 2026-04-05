@@ -26,15 +26,17 @@ internal static class Program
         });
         serviceCollection.AddSingleton<IUserRepository>(provider =>
         {
-            var userCollection = provider.GetRequiredService<IMyCollection<Developer>>();
+            var userCollection = provider.GetRequiredService<IMyCollection<User>>();
             return new UserRepository("user.json", userCollection);
         });
 
         serviceCollection.AddSingleton<ITaskService, TaskService>();
         serviceCollection.AddSingleton<IUserService, UserService>();
         serviceCollection.AddSingleton<ITaskView, KanbanTaskView>();
+        serviceCollection.AddSingleton<ILoginService, LoginService>();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
+        var loginservice = serviceProvider.GetRequiredService<ILoginService>();
         var view = serviceProvider.GetRequiredService<ITaskView>();
 
         view.Run();

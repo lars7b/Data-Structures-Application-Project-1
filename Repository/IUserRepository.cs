@@ -1,10 +1,11 @@
 using Project_1.Collections;
+using Project_1.Model;
 
 namespace Project_1.Repository;
 
 public interface IUserRepository
 {
-    public IMyCollection<User> LoadAllUsers();
-    public void SaveUsers(IMyCollection<User> users);
-    public Result<User> GetUserByUsername(string username);
+    IMyCollection<User> LoadAllUsers();
+    void SaveUsers(IMyCollection<User> users);
+    Result<User> GetUserByUsername(string username);
 }
