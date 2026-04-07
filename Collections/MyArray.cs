@@ -45,12 +45,12 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T>
         return result;
     }
 
-    public Result<T>? FindBy<K>(K key, Func<T, K, bool> comparer)
+    public Result<T> FindBy<K>(K key, Func<T, K, bool> comparer)
     {
         for (var i = 0; i < Count; i++)
             if (comparer(_array[i], key))
                 return new Result<T>(true, _array[i]);
-        return default;
+        return new Result<T>(false, default!);
     }
 
     public IEnumerator<T> GetEnumerator()

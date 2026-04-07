@@ -14,6 +14,6 @@ public interface ITaskService
     public bool CheckUser(string username, int taskid);
     void RemoveTask(int id);
     public void RemoveUserFromTask(int id);
-    void ToggleStatus(int id);
+    void ChangeStatus(int id, Status status);
     void ChangePriority(int id, Priority priority);
 }

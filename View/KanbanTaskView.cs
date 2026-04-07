@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using Project_1.Collections;
+﻿using Project_1.Collections;
 using Project_1.Model;
 using Project_1.Service;
 using Spectre.Console;
@@ -17,13 +16,13 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
 
             var isLoggedIn = loginService.CurrentUser != null;
             var isAdmin = loginService.CurrentUser?.Role == Access.Admin;
-            var currentUser = loginService.CurrentUser;
+            var currentUser = loginService.CurrentUser!;
 
-            var choices = new List<string> { "Signup/Login" };
+            var choices = new List<string> { "Login" };
 
             if (isLoggedIn)
             {
-                choices.Remove("Signup/Login");
+                choices.Remove("Login");
                 choices.Add("Logout");
                 if (isAdmin)
                 {
@@ -53,10 +52,10 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
                 case "Logout":
                     loginService.Logout();
                     break;
-                case "Signup/Login":
+                case "Login":
                     var name = AnsiConsole.Ask<string>("Enter your name: ");
-                    bool result = loginService.Login(name);
-                    if(result == false) break;
+                    var result = loginService.Login(name);
+                    if (!result) break;
                     loginService.CurrentUser = userService.FindUser(name).Value;
                     break;
                 case "Add User":
@@ -81,7 +80,7 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
 
                 case "Remove User from Task":
                     var taskIdToRemoveUser = AnsiConsole.Ask<int>("Enter task id: ");
-                    if(!taskService.CheckUser(currentUser.Name, taskIdToRemoveUser)) break;
+                    if (!taskService.CheckUser(currentUser.Name, taskIdToRemoveUser)) break;
                     taskService.RemoveUserFromTask(taskIdToRemoveUser);
                     break;
 
@@ -92,19 +91,24 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
 
                 case "Remove Task":
                     var taskToRemove = AnsiConsole.Ask<int>("Enter task id to remove: ");
-                    if(!taskService.CheckUser(currentUser.Name, taskToRemove)) break;
+                    if (!taskService.CheckUser(currentUser.Name, taskToRemove)) break;
                     taskService.RemoveTask(taskToRemove);
                     break;
 
                 case "Toggle Task State":
                     var idToToggle = AnsiConsole.Ask<int>("Enter task id: ");
-                    if(!taskService.CheckUser(currentUser.Name, idToToggle)) break;
+                    if (!taskService.CheckUser(currentUser.Name, idToToggle)) break;
+                    
+                    var task = taskService.GetAllTasks().FindBy(idToToggle, (item, i) => item.Id == i);
                     var state = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                        .Title("Select which state to change/toggle: ").AddChoices("Status", "Priority"));
+                        .Title($"Select which state to change/toggle for: {ToMarkUp(task.Value!)}")
+                        .AddChoices("Status", "Priority"));
                     switch (state)
                     {
                         case "Status":
-                            taskService.ToggleStatus(idToToggle);
+                            var status = AnsiConsole.Prompt(
+                                new SelectionPrompt<Status>().AddChoices(Status.Todo, Status.Doing, Status.Done));
+                            taskService.ChangeStatus(idToToggle, status);
                             break;
                         case "Priority":
                             var priority = AnsiConsole.Prompt(new SelectionPrompt<Priority>().AddChoices(Priority.None,
@@ -187,18 +191,17 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
             .AddColumn("[bold olive]Doing[/]")
             .AddColumn("[bold darkgreen]Done[/]");
 
-        var todoRows = tasks.Filter(x => x.Status == Status.Todo);
-        var doingRows = tasks.Filter(x => x.Status == Status.Doing);
-        var doneRows = tasks.Filter(x => x.Status == Status.Done);
+        var todoRows = tasks.Filter(x => x.Status == Status.Todo).ToArray();
+        var doingRows = tasks.Filter(x => x.Status == Status.Doing).ToArray();
+        var doneRows = tasks.Filter(x => x.Status == Status.Done).ToArray();
 
-        var maxRows = Math.Max(todoRows.Count, Math.Max(doingRows.Count, doneRows.Count));
-        /* use GetEnumerator
+        var maxRows = Math.Max(todoRows.Length, Math.Max(doingRows.Length, doneRows.Length));
+
         for (var i = 0; i < maxRows; i++)
             table.AddRow(
-                i < todoRows.Count ? ToMarkUp(todoRows[i]) : string.Empty,
-                i < doingRows.Count ? ToMarkUp(doingRows[i]) : string.Empty,
-                i < doneRows.Count ? ToMarkUp(doneRows[i]) : string.Empty);
-        */
+                i < todoRows.Length ? ToMarkUp(todoRows[i]) : string.Empty,
+                i < doingRows.Length ? ToMarkUp(doingRows[i]) : string.Empty,
+                i < doneRows.Length ? ToMarkUp(doneRows[i]) : string.Empty);
         return table;
     }
 

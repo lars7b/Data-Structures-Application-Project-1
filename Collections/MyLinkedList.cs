@@ -94,7 +94,7 @@ public class MyLinkedList<T> : IMyCollection<T>, IEnumerable<T>
         }
     }
 
-    Result<T>? IMyCollection<T>.FindBy<K>(K key, Func<T, K, bool> comparer)
+    Result<T> IMyCollection<T>.FindBy<K>(K key, Func<T, K, bool> comparer)
     {
         Node? current = head;
         while (current != null)
@@ -105,7 +105,7 @@ public class MyLinkedList<T> : IMyCollection<T>, IEnumerable<T>
             }
             current = current.Next;
         }
-        return default;
+        return new Result<T>(false, default!);
     }
 
     public IMyCollection<T> Filter(Func<T, bool> predicate)
