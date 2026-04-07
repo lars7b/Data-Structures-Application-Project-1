@@ -24,6 +24,7 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
             if (isLoggedIn)
             {
                 choices.Remove("Signup/Login");
+                choices.Add("Logout");
                 if (isAdmin)
                 {
                     choices.Add("Add User");
@@ -49,6 +50,9 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
 
             switch (choice)
             {
+                case "Logout":
+                    loginService.Logout();
+                    break;
                 case "Signup/Login":
                     var name = AnsiConsole.Ask<string>("Enter your name: ");
                     bool result = loginService.Login(name);
