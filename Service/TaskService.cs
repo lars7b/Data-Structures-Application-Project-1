@@ -1,4 +1,5 @@
-﻿using Project_1.Collections;
+﻿using System.Data.Common;
+using Project_1.Collections;
 using Project_1.Model;
 using Project_1.Repository;
 
@@ -35,12 +36,14 @@ public class TaskService : ITaskService
         return _tasks.Filter(x => x.CreatedAt.Date == date.Date);
     }
 
-    public void AssignTaskToUser(int id, IUser user)
+    public void AssignTaskToUser(int id, User user)
     {
-        var taskItem = _tasks.FindBy(id, (task, key) => task.Id == key)?.Value;
-        if (taskItem == null) return;
-        taskItem.AssignedTo = user.Name;
-        _repository.SaveTasks(_tasks);
+        if(CheckUser(user.Name, id)){
+            var taskItem = _tasks.FindBy(id, (task, key) => task.Id == key)?.Value;
+            if (taskItem == null) return;
+            taskItem.AssignedTo = user.Name;
+            _repository.SaveTasks(_tasks);
+        }
     }
 
     public void RemoveUserFromTask(int id)
@@ -51,7 +54,7 @@ public class TaskService : ITaskService
         _repository.SaveTasks(_tasks);
     }
 
-    public void AddTask(string description, Priority priority = Priority.None, Status status = Status.Todo)
+    public void AddTask(string username, string description, Priority priority = Priority.None, Status status = Status.Todo)
     {
         var newId = 1;
 
@@ -60,12 +63,12 @@ public class TaskService : ITaskService
             newId++;
         }
 
-        var newTask = new TaskItem { Id = newId, Description = description, Priority = priority, Status = status };
+        var newTask = new TaskItem { Id = newId, Description = description, Priority = priority, Status = status, AssignedTo = username };
         _tasks.Add(newTask);
         _repository.SaveTasks(_tasks);
     }
 
-    public void RemoveTask(int id)
+    public void RemoveTask( int id)
     {
         var task = _tasks.FindBy(id, (task, key) => task.Id == key);
         if (task == null) return;
@@ -94,5 +97,15 @@ public class TaskService : ITaskService
         if (task == null) return;
         task.Value.Priority = priority;
         _repository.SaveTasks(_tasks);
+    }
+
+    public bool CheckUser(string username, int taskid)
+    {
+        var result = _tasks.FindBy(taskid, (task, key) => task.Id == key);
+        if (result.Succes && username == result.Value.AssignedTo)
+        {
+            return true;
+        }
+        return false;
     }
 }

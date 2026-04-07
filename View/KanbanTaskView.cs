@@ -1,4 +1,5 @@
-﻿using Project_1.Collections;
+﻿using System.Security.Cryptography.X509Certificates;
+using Project_1.Collections;
 using Project_1.Model;
 using Project_1.Service;
 using Spectre.Console;
@@ -6,7 +7,7 @@ using Status = Project_1.Model.Status;
 
 namespace Project_1.View;
 
-public class KanbanTaskView(ITaskService taskService, IUserService userService) : ITaskView
+public class KanbanTaskView(ITaskService taskService, IUserService userService, ILoginService loginService) : ITaskView
 {
     public void Run()
     {
@@ -14,14 +15,16 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService) 
         {
             DrawTable();
 
-            var isLoggedIn = userService.LoggedInUser != null;
-            var isAdmin = userService.LoggedInUser?.Name == "Admin";
+            var isLoggedIn = loginService.CurrentUser != null;
+            var isAdmin = loginService.CurrentUser?.Role == Access.Admin;
+            var currentUser = loginService.CurrentUser;
 
             var choices = new List<string> { "Signup/Login" };
 
             if (isLoggedIn)
             {
                 choices.Remove("Signup/Login");
+                choices.Add("Logout");
                 if (isAdmin)
                 {
                     choices.Add("Add User");
@@ -42,19 +45,24 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService) 
             choices.Add("Exit");
 
             var choice = AnsiConsole.Prompt(new SelectionPrompt<string>().Title(
-                    $"Logged in as: [bold]{(isLoggedIn ? userService.LoggedInUser!.Name : "Guest")}[/] - Select an option:")
+                    $"Logged in as: [bold]{(isLoggedIn ? loginService.CurrentUser!.Name : "Guest")}[/] - Select an option:")
                 .AddChoices(choices));
 
             switch (choice)
             {
+                case "Logout":
+                    loginService.Logout();
+                    break;
                 case "Signup/Login":
                     var name = AnsiConsole.Ask<string>("Enter your name: ");
-                    userService.LoginUser(name);
+                    bool result = loginService.Login(name);
+                    if(result == false) break;
+                    loginService.CurrentUser = userService.FindUser(name).Value;
                     break;
-
                 case "Add User":
-                    var userToAdd = AnsiConsole.Ask<string>("Enter new user name: ");
-                    userService.AddUser(userToAdd);
+                    var userToAddUsername = AnsiConsole.Ask<string>("Enter new user name: ");
+                    var userToAddPassword = AnsiConsole.Ask<string>("Enter new password: ");
+                    userService.AddUser(userToAddUsername, userToAddPassword);
                     break;
 
                 case "Remove User":
@@ -67,27 +75,30 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService) 
                     var usernameToAssign =
                         AnsiConsole.Ask<string>($"Enter user name to assign to task: {taskIdToAssign}");
                     var userToAssign = userService.FindUser(usernameToAssign);
-                    if (userToAssign != null)
-                        taskService.AssignTaskToUser(taskIdToAssign, userToAssign);
+                    if (userToAssign.Succes)
+                        taskService.AssignTaskToUser(taskIdToAssign, userToAssign.Value);
                     break;
 
                 case "Remove User from Task":
                     var taskIdToRemoveUser = AnsiConsole.Ask<int>("Enter task id: ");
+                    if(!taskService.CheckUser(currentUser.Name, taskIdToRemoveUser)) break;
                     taskService.RemoveUserFromTask(taskIdToRemoveUser);
                     break;
 
                 case "Add Task":
                     var description = AnsiConsole.Ask<string>("Enter task description: ");
-                    taskService.AddTask(description);
+                    taskService.AddTask(currentUser.Name, description);
                     break;
 
                 case "Remove Task":
                     var taskToRemove = AnsiConsole.Ask<int>("Enter task id to remove: ");
+                    if(!taskService.CheckUser(currentUser.Name, taskToRemove)) break;
                     taskService.RemoveTask(taskToRemove);
                     break;
 
                 case "Toggle Task State":
                     var idToToggle = AnsiConsole.Ask<int>("Enter task id: ");
+                    if(!taskService.CheckUser(currentUser.Name, idToToggle)) break;
                     var state = AnsiConsole.Prompt(new SelectionPrompt<string>()
                         .Title("Select which state to change/toggle: ").AddChoices("Status", "Priority"));
                     switch (state)

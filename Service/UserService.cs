@@ -1,48 +1,43 @@
 using Project_1.Collections;
 using Project_1.Repository;
+using Project_1.Model;
 
 namespace Project_1.Service;
 
 public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
-    private readonly IMyCollection<Developer> _users;
-    private bool _loggedIn;
+    private readonly IMyCollection<User> _users;
+    private int _nextId;
 
     public UserService(IUserRepository repository)
     {
         _repository = repository;
         _users = _repository.LoadAllUsers();
-        var user = "Admin";
-        var result = _users.FindBy(user, (u, key) => u.Name == key);
-        if (result == null)
+        _nextId  = _users.Count == 0 ? 1 : _users.Max(_=>_.Id) +1;
+        if (!AnyAdminExists())
         {
-            _users.Add(new Developer(user) { Rights = Authorization.Admin });
-            _repository.SaveUsers(_users);
+            var admin = new User(_nextId, "Admin", "Secret01");
+            admin.SetRole(Access.Admin);
+            _users.Add(admin);
         }
-        _loggedIn = false;
-    }
-
-    public Developer? LoggedInUser { get; set; }
-
-    public bool LoggedIn
-    {
-        get => _loggedIn;
-        set => _ = false;
-    }
-
-    public void AddUser(string name) 
-    {
-        var newId = 1;
-
-        while (_users.FindBy(newId, (user, key) => user.Id == key) != null)
-        {
-            newId++;
-        }
-
-        var newUser = new Developer(name) { Id = newId, Name = name, Rights = Authorization.Dev };
-        _users.Add(newUser);
         _repository.SaveUsers(_users);
+    }
+    public bool AnyAdminExists()
+    {
+        return _users.Any(u=>u.Role == Access.Admin);
+    }
+    public void MakeAdmin(User user)
+    {
+        user.SetRole(Access.Admin);
+    }
+    public bool AddUser(string name, string password)
+    {
+        if(string.IsNullOrWhiteSpace(name)||string.IsNullOrWhiteSpace(password)) return false;
+        _users.Add(new User(_nextId,name, password));
+        _nextId++;
+        _repository.SaveUsers(_users);
+        return true;
     }
 
     public int Count()
@@ -50,30 +45,29 @@ public class UserService : IUserService
         return _users.Count;
     }
 
-    public IMyCollection<Developer> GetAllUsers()
+    public Result<User> FindUser(string name)
+    {
+        return _users.FindBy(name, (result, name) => result.Name == name);
+    }
+
+    public IMyCollection<User> GetAllUsers()
     {
         return _users;
     }
 
-    public IUser? FindUser(string name)
+    public bool RemoveUser(string name)
     {
-        var result = _users.FindBy(name, (user, key) => user.Name == key);
-        return result?.Value;
-    }
-
-    public void RemoveUser(string name)
-    {
-        var user = _users.FindBy(name, (user, key) => user.Name == key);
-        if (user == null) return;
-        _users.Remove(user.Value);
+        if(string.IsNullOrWhiteSpace(name)) return false;
+        var result = FindUser(name);
+        if (result.Succes)
+        {
+            _users.Remove(result.Value);
+        }
+        else
+        {
+            return false;
+        }
         _repository.SaveUsers(_users);
-    }
-
-    public void LoginUser(string name)
-    {
-        var user = _users.FindBy(name, (user, key) => user.Name == key);
-        if (user == null) return;
-        LoggedInUser = user?.Value;
-        _loggedIn = !_loggedIn;
+        return true;
     }
 }

@@ -1,57 +1,44 @@
-public enum Authorization
+namespace Project_1.Model;
+public enum Access
 {
-    Admin, //0
-    Dev //1
-}
-// public class Developer : IDeveloper
-// {
-//     private class Admin : IAdminPrivileges
-//     {
-//         public int Key { get; set; }
-//         public Authorization Rights { get; set; }
-//         public int Id { get; set; }
-//         public string Name { get; set; }
-//         public Admin(int key)
-//         {
-//             Key = key;
-//             Name = "Admin";
-//         }
-//     }
-//     public Authorization Rights { get; set; }
-//     public int Id { get; set; }
-//     public string Name { get; set; }
-//     public Developer(string name)
-//     {
-//         Name = name;
-//     }
-// }
-
-public class Admin : IAdminPrivileges
-{
-    public Admin(int key)
-    {
-        Rights = Authorization.Admin;
-        Name = "Admin";
-        Key = key;
-    }
-
-    public int Key { get; set; }
-    public Authorization Rights { get; set; }
-
-    public int Id { get; set; }
-    public string Name { get; set; }
+    Basic = 0,
+    Admin = 1
 }
 
-public class Developer : IDeveloper
+public class User
 {
-    public Developer(string name)
+    public int Id{get;private set;}
+    // private string _name;
+    // private string _password;
+    public Access Role { get; set; }
+    public string Name{get; private set;}
+    public string Password{get; private set;}
+    public User(int id, string name, string password)
     {
-        Rights = Authorization.Dev;
+        Id = id;
         Name = name;
+        Password = password;
+        Role = Access.Basic;
     }
-
-    public Authorization Rights { get; set; }
-
-    public int Id { get; set; }
-    public string Name { get; set; }
+    public bool ChangeName(string name)
+    {
+        if(string.IsNullOrWhiteSpace(name)) return false;
+        Name = name;
+        return true;
+    }
+    public bool ChangePassword(string o_passw, string n_passw)
+    {
+        if(string.IsNullOrWhiteSpace(o_passw)) return false;
+        if(Password == o_passw)
+        {
+            if(string.IsNullOrWhiteSpace(n_passw)) return false;
+            Password = n_passw;
+            return true;
+        }
+        return false;
+    }
+    public void SetRole(Access newRole)
+    {
+        Role = newRole;
+    }
 }
