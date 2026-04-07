@@ -20,6 +20,7 @@ public class UserService : IUserService
             var admin = new User(_nextId, "Admin", "Secret01");
             admin.SetRole(Access.Admin);
             _users.Add(admin);
+            _nextId++;
         }
         _repository.SaveUsers(_users);
     }
@@ -34,8 +35,7 @@ public class UserService : IUserService
     public bool AddUser(string name, string password)
     {
         if(string.IsNullOrWhiteSpace(name)||string.IsNullOrWhiteSpace(password)) return false;
-        _nextId++;
-        _users.Add(new User(_nextId,name, password));
+        _users.Add(new User(_nextId++, name, password));
         _repository.SaveUsers(_users);
         return true;
     }
