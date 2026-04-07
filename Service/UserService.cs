@@ -34,8 +34,8 @@ public class UserService : IUserService
     public bool AddUser(string name, string password)
     {
         if(string.IsNullOrWhiteSpace(name)||string.IsNullOrWhiteSpace(password)) return false;
-        _users.Add(new User(_nextId,name, password));
         _nextId++;
+        _users.Add(new User(_nextId,name, password));
         _repository.SaveUsers(_users);
         return true;
     }
