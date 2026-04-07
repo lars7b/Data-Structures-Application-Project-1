@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using Project_1.Collections;
+﻿using Project_1.Collections;
 using Project_1.Model;
 using Project_1.Repository;
 
@@ -38,7 +37,8 @@ public class TaskService : ITaskService
 
     public void AssignTaskToUser(int id, User user)
     {
-        if(CheckUser(user.Name, id)){
+        if (CheckUser(user.Name, id))
+        {
             var taskItem = _tasks.FindBy(id, (task, key) => task.Id == key)?.Value;
             if (taskItem == null) return;
             taskItem.AssignedTo = user.Name;
@@ -54,21 +54,20 @@ public class TaskService : ITaskService
         _repository.SaveTasks(_tasks);
     }
 
-    public void AddTask(string username, string description, Priority priority = Priority.None, Status status = Status.Todo)
+    public void AddTask(string username, string description, Priority priority = Priority.None,
+        Status status = Status.Todo)
     {
         var newId = 1;
 
-        while (_tasks.FindBy(newId, (task, key) => task.Id == key) != null)
-        {
-            newId++;
-        }
+        while (_tasks.FindBy(newId, (task, key) => task.Id == key) != null) newId++;
 
-        var newTask = new TaskItem { Id = newId, Description = description, Priority = priority, Status = status, AssignedTo = username };
+        var newTask = new TaskItem
+            { Id = newId, Description = description, Priority = priority, Status = status, AssignedTo = username };
         _tasks.Add(newTask);
         _repository.SaveTasks(_tasks);
     }
 
-    public void RemoveTask( int id)
+    public void RemoveTask(int id)
     {
         var task = _tasks.FindBy(id, (task, key) => task.Id == key);
         if (task == null) return;
@@ -76,18 +75,11 @@ public class TaskService : ITaskService
         _repository.SaveTasks(_tasks);
     }
 
-    public void ToggleStatus(int id)
+    public void ChangeStatus(int id, Status status)
     {
         var task = _tasks.FindBy(id, (task, key) => task.Id == key);
         if (task == null) return;
-        task.Value.Status = task.Value.Status switch
-        {
-            Status.Todo => Status.Doing,
-            Status.Doing => Status.Done,
-            Status.Done => Status.Doing,
-            _ => Status.Todo
-        };
-
+        task.Value.Status = status;
         _repository.SaveTasks(_tasks);
     }
 
@@ -102,10 +94,7 @@ public class TaskService : ITaskService
     public bool CheckUser(string username, int taskid)
     {
         var result = _tasks.FindBy(taskid, (task, key) => task.Id == key);
-        if (result.Succes && username == result.Value.AssignedTo)
-        {
-            return true;
-        }
+        if (result.Succes && username == result.Value.AssignedTo) return true;
         return false;
     }
 }
