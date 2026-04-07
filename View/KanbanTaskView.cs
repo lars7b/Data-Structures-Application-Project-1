@@ -16,13 +16,13 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
 
             var isLoggedIn = loginService.CurrentUser != null;
             var isAdmin = loginService.CurrentUser?.Role == Access.Admin;
-            var currentUser = loginService.CurrentUser;
+            var currentUser = loginService.CurrentUser!;
 
-            var choices = new List<string> { "Signup/Login" };
+            var choices = new List<string> { "Login" };
 
             if (isLoggedIn)
             {
-                choices.Remove("Signup/Login");
+                choices.Remove("Login");
                 choices.Add("Logout");
                 if (isAdmin)
                 {
@@ -52,7 +52,7 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
                 case "Logout":
                     loginService.Logout();
                     break;
-                case "Signup/Login":
+                case "Login":
                     var name = AnsiConsole.Ask<string>("Enter your name: ");
                     var result = loginService.Login(name);
                     if (!result) break;
@@ -97,9 +97,11 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
 
                 case "Toggle Task State":
                     var idToToggle = AnsiConsole.Ask<int>("Enter task id: ");
+                    if (!taskService.CheckUser(currentUser.Name, idToToggle)) break;
+                    
                     var task = taskService.GetAllTasks().FindBy(idToToggle, (item, i) => item.Id == i);
                     var state = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                        .Title($"Select which state to change/toggle for: {ToMarkUp(task?.Value!)}")
+                        .Title($"Select which state to change/toggle for: {ToMarkUp(task.Value!)}")
                         .AddChoices("Status", "Priority"));
                     switch (state)
                     {
