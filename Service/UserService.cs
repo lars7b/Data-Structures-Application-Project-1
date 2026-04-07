@@ -15,9 +15,11 @@ public class UserService : IUserService
         _repository = repository;
         _users = _repository.LoadAllUsers();
         _nextId  = _users.Count == 0 ? 1 : _users.Max(_=>_.Id) +1;
-        if (AnyAdminExists() == false)
+        if (!AnyAdminExists())
         {
-            AddUser("Admin", "Secret01");
+            var admin = new User(_nextId, "Admin", "Secret01");
+            admin.SetRole(Access.Admin);
+            _users.Add(admin);
         }
         _repository.SaveUsers(_users);
     }

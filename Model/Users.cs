@@ -10,8 +10,7 @@ public class User
     public int Id{get;private set;}
     // private string _name;
     // private string _password;
-    private Access _role;
-    public Access Role{get => _role;}
+    public Access Role { get; set; }
     public string Name{get; private set;}
     public string Password{get; private set;}
     public User(int id, string name, string password)
@@ -19,7 +18,7 @@ public class User
         Id = id;
         Name = name;
         Password = password;
-        _role = Access.Basic;
+        Role = Access.Basic;
     }
     public bool ChangeName(string name)
     {
@@ -38,8 +37,8 @@ public class User
         }
         return false;
     }
-    internal void SetRole(Access newRole)
+    public void SetRole(Access newRole)
     {
-        _role = newRole;
+        Role = newRole;
     }
 }

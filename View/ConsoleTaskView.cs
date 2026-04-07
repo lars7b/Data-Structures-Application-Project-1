@@ -88,7 +88,7 @@ public class ConsoleTaskView(ITaskService taskservice, IUserService userservice,
                     if (_loggedin)
                     {
                         var description = Prompt("Enter task description: ");
-                        if (description != null) taskservice.AddTask(description);
+                        if (description != null) taskservice.AddTask(loginservice.CurrentUser.Name, description);
                     }
                     break;
                 case "3":
