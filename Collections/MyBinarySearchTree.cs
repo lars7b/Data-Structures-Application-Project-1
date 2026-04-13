@@ -1,29 +1,32 @@
 using System.Collections;
-using System.Security.AccessControl;
 
 namespace Project_1.Collections;
 
-public class MyBinarySearchTree<T> : IMyCollection<T>, IEnumerable<T>
+public class MyBinarySearchTree<T> : IMyCollection<T>, IEnumerable<T> where T : IComparable<T>
 {
     private Node? Root;
-    public int Count { get; set; } // black height of the tree
+    private int _count;
+    public int Count
+    {
+    get => _count;
+    private set => _count = Math.Max(0, value);
+    }
     public bool Dirty { get; set; }
 
     private class Node
     {
-        public T? Data { get; set; }
-        public char Color { get; set; } 
+        public T Data { get; set; }
         public Node? Left { get; set; }
         public Node? Right { get; set; }
-        public Node? Parent { get; set; }
+        public int Height { get; set; }
+
 
         public Node(T data)
         {
             Data = data;
-            Color = 'R';
             Left = null;
             Right = null;
-            Parent = null;
+            Height = 1;
         }
     }
 
@@ -31,87 +34,322 @@ public class MyBinarySearchTree<T> : IMyCollection<T>, IEnumerable<T>
     {
         Root = null;
         Dirty = false;
-        Count = 0;       
+        Count = 0;
     }
 
     public void Add(T item)
     {
-        // If tree is empty, insert as root and color black
-        if (Root == null) 
-        {
-            Root = new Node(item);
-            Root.Color = 'B';
-            return;
-        }
-        else Root = InsertHelp(Root, item);
+        Root = InsertHelp(Root, item);
+        Dirty = true;
     }
-    
-    
+
+    private Node InsertHelp(Node? node, T item)
+    {
+        // Standard BST insertion
+        if (node == null)
+        {
+            Count++;
+            return new Node(item);
+        }
+
+        if (item.CompareTo(node.Data) < 0)
+            node.Left = InsertHelp(node.Left, item);
+        else if (item.CompareTo(node.Data) > 0)
+            node.Right = InsertHelp(node.Right, item);
+        else
+            return node; // If duplicate id
+
+        UpdateHeight(node);
+        int balance = GetBalance(node);
+
+        // Unbalanced cases
+
+        // LL
+        if (balance > 1 && item.CompareTo(node.Left!.Data) < 0)
+            return RightRotate(node);
+
+        // RR
+        if (balance < -1 && item.CompareTo(node.Right!.Data) > 0)
+            return LeftRotate(node);
+
+        // LR
+        if (balance > 1 && item.CompareTo(node.Left!.Data) > 0)
+        {
+            node.Left = LeftRotate(node.Left);
+            return RightRotate(node);
+        }
+
+        // RL
+        if (balance < -1 && item.CompareTo(node.Right!.Data) < 0)
+        {
+            node.Right = RightRotate(node.Right);
+            return LeftRotate(node);
+        }
+
+        return node;
+    }
+
     public void Remove(T item)
     {
-        // Remove the node using standard BST rules.
-        //If a black node is deleted, a "double black" condition might arise, which requires specific fixes.
+        bool wasRemoved = false;
+        Root = RemoveHelp(Root, item, ref wasRemoved);
 
-
-        // When deleting a black node, resolve "double-black" based on the sibling's color:
-
-        // If the sibling is red, rotate the parent, and recolor.
-        // If the sibling is black:
-        // If all of the sibling's children are black, recolor the sibling and propagate the issue.
-        // If at least one of the sibling's child is red:
-        // a. If the far child is red, rotate the parent and sibling, and recolor.
-        // b. If the near child is red, rotate the sibling and its child, then handle as above.
+        if (wasRemoved)
+        {
+            Count--;
+            Dirty = true;
+        }
     }
 
-    public Result<T> FindBy<K>(K key, Func<T, K, bool> comparer) 
-    { 
-        // If the target value equals the current node's value, the node is found.
-        // If less, move left; if greater, move right.
-        // Repeat until the target is found or a NIL node is reached.
-        return default; 
+    private Node? RemoveHelp(Node? node, T item, ref bool removed)
+    {
+        if (node == null) return null;
+
+        if (item.CompareTo(node.Data) < 0)
+            node.Left = RemoveHelp(node.Left, item, ref removed);
+        else if (item.CompareTo(node.Data) > 0)
+            node.Right = RemoveHelp(node.Right, item, ref removed);
+        else
+        {
+            removed = true;
+
+            // Node has 0 or 1 child
+            if (node.Left == null) return node.Right;
+            if (node.Right == null) return node.Left;
+
+            // Node has 2 children
+            Node successor = node.Right;
+            while (successor.Left != null)
+                successor = successor.Left;
+
+            node.Data = successor.Data;
+
+            bool dummy = false;
+            node.Right = RemoveHelp(node.Right, successor.Data, ref dummy);
+        }
+
+        UpdateHeight(node);
+
+        int balance = GetBalance(node);
+
+
+        // Left Heavy
+        if (balance > 1)
+        {
+            // LL
+            if (GetBalance(node.Left) >= 0)
+                return RightRotate(node);
+
+            // LR
+            if (GetBalance(node.Left) < 0)
+            {
+                node.Left = LeftRotate(node.Left!);
+                return RightRotate(node);
+            }
+        }
+
+        // Right Heavy
+        if (balance < -1)
+        {
+            // RR
+            if (GetBalance(node.Right) <= 0)
+                return LeftRotate(node);
+
+            // RL
+            if (GetBalance(node.Right) > 0)
+            {
+                node.Right = RightRotate(node.Right!);
+                return LeftRotate(node);
+            }
+        }
+
+        // Return balanced node up the recursive chain
+        return node;
     }
 
-    public IMyCollection<T> Filter(Func<T, bool> predicate) { return default; }
+
+    // O(n) DFS traversal because the Func does not specify the search direction
+    public Result<T> FindBy<K>(K key, Func<T, K, bool> comparer)
+    {
+        if (Root == null) return new Result<T>(false, default!);
+
+        Stack<Node> stack = new Stack<Node>();
+        stack.Push(Root);
+
+        while (stack.Count > 0)
+        {
+            Node current = stack.Pop();
+
+            if (comparer(current.Data, key))
+            {
+                return new Result<T>(true, current.Data);
+            }
+
+            if (current.Right != null) stack.Push(current.Right);
+            if (current.Left != null) stack.Push(current.Left);
+        }
+
+        return new Result<T>(false, default!);
+    }
+
+    public IMyCollection<T> Filter(Func<T, bool> predicate)
+    {
+        var result = new MyBinarySearchTree<T>();
+
+        foreach (var item in this)
+        {
+            if (predicate(item))
+            {
+                result.Add(item);
+            }
+        }
+
+        return result;
+    }
+
     public void Sort(Comparison<T> comparison) { }
-    public R Reduce<R>(Func<R, T, R> accumulator) { return default; }
-    public R Reduce<R>(R initial, Func<R, T, R> accumulator) { return default; }
-    public IMyIterator<T> GetIterator() { return default; }
-    public IEnumerator<T> GetEnumerator() { return default; }
+    public R Reduce<R>(Func<R, T, R> accumulator)
+    {
+        R result = default!;
+        return Reduce(result, accumulator);
+    }
+
+    public R Reduce<R>(R initial, Func<R, T, R> accumulator)
+    {
+        R result = initial;
+
+        foreach (var item in this)
+        {
+            result = accumulator(result, item);
+        }
+
+        return result;
+    }
+
+    public IMyIterator<T> GetIterator()
+    {
+        return new BstIterator(Root);
+    }
+
+    private class BstIterator : IMyIterator<T>
+    {
+        private readonly Stack<Node> _stack;
+        private readonly Node? _root;
+
+        public BstIterator(Node? root)
+        {
+            _root = root;
+            _stack = new Stack<Node>();
+            PushLeftBranch(_root);
+        }
+
+        private void PushLeftBranch(Node? node)
+        {
+            while (node != null)
+            {
+                _stack.Push(node);
+                node = node.Left;
+            }
+        }
+
+        public bool HasNext()
+        {
+            return _stack.Count > 0;
+        }
+
+        public T Next()
+        {
+            if (_stack.Count == 0) throw new InvalidOperationException("End of tree.");
+
+            Node current = _stack.Pop();
+            T data = current.Data;
+
+            if (current.Right != null)
+            {
+                PushLeftBranch(current.Right);
+            }
+
+            return data;
+        }
+
+        public void Reset()
+        {
+            _stack.Clear();
+            PushLeftBranch(_root);
+        }
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        return InOrderTraversal(Root).GetEnumerator();
+    }
+
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
     }
 
-    private Node InsertHelp(Node node, T item)
+    private IEnumerable<T> InOrderTraversal(Node? node)
     {
-        // Standard bst insertion, node = red
-        // If parent is black, done
+        if (node != null)
+        {
+            foreach (var item in InOrderTraversal(node.Left))
+                yield return item;
 
-        // If parent is red, check uncle
-            // If uncle is red, recolor parent and uncle to black, grandparent to red, Change x = x's grandparent, repeat steps 2 and 3 for new x.
-            
-            // If uncle is black, 
-                                    // 1. Left Left Case (p is left child of g and x is left child of p) swap colors of grandparent and parent after rotations
-                                    // 2. Left Right Case (p is left child of g and x is the right child of p) swap colors of grandparent and inserted node after rotations
-                                    // 3. Right Right Case (Mirror of case 1) swap colors of grandparent and parent after rotations
-                                    // 4. Right Left Case (Mirror of case 2)  swap colors of grandparent and inserted node after rotations
-        return default;
-    }
-    private void LeftRotate(Node x)
-    {
-        // Detach Subtree: Move y's left subtree to become x's new right subtree.
-        // Shift Parent Link: Update y’s parent to be x’s current parent.
-        // Relink Parent: Update x’s parent to point to y instead of x.
-        // Promote Child: Set y’s left child to x.
-        // Finalize Parent: Set x’s parent to y.
+            yield return node.Data;
+
+            foreach (var item in InOrderTraversal(node.Right))
+                yield return item;
+        }
     }
 
-    private void RightRotate(Node x)
+    private Node RightRotate(Node y)
     {
-        // Detach Subtree: Move y’s right subtree to become x’s new left subtree.
-        // Shift Parent Link: Update y’s parent to be x’s current parent.
-        // Relink Parent: Update x’s parent to point to y instead of x.
-        // Promote Child: Set y’s right child to x.
-        // Finalize Parent: Set x’s parent to y.
+        Node x = y.Left!;
+        Node? T2 = x.Right;
+
+        //  Rotation
+        x.Right = y;
+        y.Left = T2;
+
+        // Update heights
+        UpdateHeight(y);
+        UpdateHeight(x);
+
+        return x; // Return new root
+    }
+
+    private Node LeftRotate(Node x)
+    {
+        Node y = x.Right!;
+        Node? T2 = y.Left;
+
+        //  Rotation
+        y.Left = x;
+        x.Right = T2;
+
+        // Update heights
+        UpdateHeight(x);
+        UpdateHeight(y);
+
+        return y; // Return new root
+    }
+
+    private int GetHeight(Node? node)
+    {
+        return node?.Height ?? 0;
+    }
+
+    // Positive number = leaning left. Negative = leaning right.
+    private int GetBalance(Node? node)
+    {
+        if (node == null) return 0;
+        return GetHeight(node.Left) - GetHeight(node.Right);
+    }
+
+    // Updates the height of a node based on its children
+    private void UpdateHeight(Node node)
+    {
+        node.Height = 1 + Math.Max(GetHeight(node.Left), GetHeight(node.Right));
     }
 }
