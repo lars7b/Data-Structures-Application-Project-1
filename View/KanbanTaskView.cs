@@ -35,7 +35,7 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
                 choices.Add("Add Task");
 
                 if (isAdmin)
-                    choices.Add("Remove Tasks");
+                    choices.Add("Remove Task");
 
                 choices.Add("Toggle Task State");
                 choices.Add("Filter or Sort Task List");
