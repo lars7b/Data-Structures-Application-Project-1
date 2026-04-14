@@ -72,7 +72,7 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
                 case "Assign User to Task":
                     var taskIdToAssign = AnsiConsole.Ask<int>("Enter task id: ");
                     var usernameToAssign =
-                        AnsiConsole.Ask<string>($"Enter user name to assign to task: {taskIdToAssign}");
+                        AnsiConsole.Ask<string>($"Enter user name to assign to task {taskIdToAssign}:");
                     var userToAssign = userService.FindUser(usernameToAssign);
                     if (userToAssign.Succes)
                         taskService.AssignTaskToUser(taskIdToAssign, userToAssign.Value);
