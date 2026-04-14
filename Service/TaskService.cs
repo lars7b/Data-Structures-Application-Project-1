@@ -59,7 +59,7 @@ public class TaskService : ITaskService
     {
         var newId = 1;
 
-        while (_tasks.FindBy(newId, (task, key) => task.Id == key) != null) newId++;
+        while (_tasks.FindBy(newId, (task, key) => task.Id == key).Succes) newId++;
 
         var newTask = new TaskItem
             { Id = newId, Description = description, Priority = priority, Status = status, AssignedTo = username };
