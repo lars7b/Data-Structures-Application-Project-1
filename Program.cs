@@ -14,9 +14,21 @@ internal static class Program
         string collectionType = args.Length > 0 ? args[0].ToLower() : "array";
 
         var serviceCollection = new ServiceCollection();
-        
-        if (collectionType == "linkedlist") serviceCollection.AddSingleton(typeof(IMyCollection<>), typeof(MyLinkedList<>));
-        else serviceCollection.AddSingleton(typeof(IMyCollection<>), typeof(MyArray<>));
+
+        switch (collectionType)
+        {
+            case "linkedlist":
+                serviceCollection.AddSingleton(typeof(IMyCollection<>), typeof(MyLinkedList<>));
+                break;
+            case "bst":
+                serviceCollection.AddSingleton(typeof(IMyCollection<>), typeof(MyBinarySearchTree<>));
+                break;
+            default:
+                serviceCollection.AddSingleton(typeof(IMyCollection<>), typeof(MyArray<>));
+                break;
+        }
+
+
 
         serviceCollection.AddSingleton<ITaskRepository>(provider =>
         {
@@ -24,6 +36,7 @@ internal static class Program
             return new JsonTaskRepository("tasks.json", taskCollection);
 
         });
+
         serviceCollection.AddSingleton<IUserRepository>(provider =>
         {
             var userCollection = provider.GetRequiredService<IMyCollection<User>>();
@@ -41,4 +54,4 @@ internal static class Program
 
         view.Run();
     }
-}  
+}

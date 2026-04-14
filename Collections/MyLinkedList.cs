@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Security.AccessControl;
 
 namespace Project_1.Collections;
 
@@ -7,22 +6,12 @@ public class MyLinkedList<T> : IMyCollection<T>, IEnumerable<T>
 {
     private Node? head;
     private Node? tail;
-    private int _count;
     public bool Dirty { get; set; }
+    private int _count;
     public int Count
     {
-        get
-        {
-            if (_count < 0)
-            {
-                _count = 0;
-            }
-            return _count;
-        }
-        private set
-        {
-            _count = value;
-        }
+    get => _count;
+    private set => _count = Math.Max(0, value);
     }
 
     private class Node
@@ -125,7 +114,6 @@ public class MyLinkedList<T> : IMyCollection<T>, IEnumerable<T>
         return filteredList;
     }
 
-    //this is slow, replace with merge sort
     public void Sort(Comparison<T> comparison)
     {
         if (head == null || head.Next == null) return;

@@ -5,7 +5,7 @@ public enum Access
     Admin = 1
 }
 
-public class User
+public class User : IComparable<User>
 {
     public int Id{get;private set;}
     // private string _name;
@@ -40,5 +40,11 @@ public class User
     public void SetRole(Access newRole)
     {
         Role = newRole;
+    }
+
+    public int CompareTo(User? other)
+    {
+        if (other == null) return 1;
+        return this.Id.CompareTo(other.Id);
     }
 }
