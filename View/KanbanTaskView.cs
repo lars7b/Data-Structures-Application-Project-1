@@ -79,9 +79,11 @@ public class KanbanTaskView(ITaskService taskService, IUserService userService, 
                     break;
 
                 case "Remove User from Task":
-                    var taskIdToRemoveUser = AnsiConsole.Ask<int>("Enter task id: ");
-                    if (!taskService.CheckUser(currentUser.Name, taskIdToRemoveUser)) break;
-                    taskService.RemoveUserFromTask(taskIdToRemoveUser);
+                    if(loginService.CheckRoles() == Access.Admin)
+                    {
+                        var taskIdToRemoveUser = AnsiConsole.Ask<int>("Enter task id: ");
+                        taskService.RemoveUserFromTask(taskIdToRemoveUser);
+                    }
                     break;
 
                 case "Add Task":
