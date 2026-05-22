@@ -61,7 +61,7 @@ public class MyArray<T> : IMyCollection<T>, IEnumerable<T>
 
     public IMyIterator<T> GetIterator()
     {
-        return new MyArrayIterator<T>(_array);
+        return new MyArrayIterator<T>(_array, Count);
     }
 
     public R Reduce<R>(Func<R, T, R> accumulator)

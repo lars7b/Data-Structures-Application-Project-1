@@ -1,12 +1,12 @@
 ﻿namespace Project_1.Collections;
 
-public class MyArrayIterator<T>(T[] array) : IMyIterator<T>
+public class MyArrayIterator<T>(T[] array, int count) : IMyIterator<T>
 {
     private int _index;
 
     public bool HasNext()
     {
-        return _index < array.Length;
+        return _index < count;
     }
 
     public T Next()
