@@ -11,11 +11,9 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
-        string collectionType = args.Length > 0 ? args[0].ToLower() : "array";
-
         var serviceCollection = new ServiceCollection();
 
-        switch (collectionType)
+        switch (args.FirstOrDefault()?.ToLower())
         {
             case "linkedlist":
                 serviceCollection.AddSingleton(typeof(IMyCollection<>), typeof(MyLinkedList<>));

@@ -14,4 +14,9 @@ public class TaskItem : IComparable<TaskItem>
         if (other == null) return 1;
         return this.Id.CompareTo(other.Id);
     }
+
+    public override string ToString()
+    {
+        return $"Id: {Id} | {Description} | Priority: {Priority} | Status: {Status}";
+    }
 }

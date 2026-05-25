@@ -149,15 +149,10 @@ public class MyLinkedList<T> : IMyCollection<T>, IEnumerable<T>
     public R Reduce<R>(R initial, Func<R, T, R> accumulator)
     {
         R result = initial;
-        Node? current = head;
 
-        while (current != null)
+        foreach (var item in this)
         {
-            if (current.Data != null)
-            {
-                result = accumulator(result, current.Data);
-            }
-            current = current.Next;
+            result = accumulator(result, item);
         }
         return result;
     }

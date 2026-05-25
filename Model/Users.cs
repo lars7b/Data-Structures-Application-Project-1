@@ -47,4 +47,9 @@ public class User : IComparable<User>
         if (other == null) return 1;
         return this.Id.CompareTo(other.Id);
     }
+
+    public override string ToString()
+    {
+        return $"Id: {Id} | Name: {Name} | Role: {Role}";
+    }
 }
